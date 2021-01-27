@@ -9,8 +9,27 @@ body {
 	background-color: powderblue;
 }
 
+button {
+	padding: 0 0.5rem;
+}
+
+form > * {
+	margin: 0 0.5rem;
+}
+
 #page-wrapper {
 	width: 80vw;
-	margin: auto;
+	margin: 2vh auto;
 	background-color: whitesmoke;
+}
+
+.control-section {
+	margin: auto;
+	padding: 2vh;
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.view-section {
+	margin: auto;
 }

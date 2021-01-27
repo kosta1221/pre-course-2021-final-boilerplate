@@ -10,17 +10,21 @@
 	<body>
 		<div id="page-wrapper">
 			<section class="control-section">
-				<input type="text" id="text-input" />
-				<select name="task-priority" id="priority-selector">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-				</select>
-				<button id="add-button">Add Task</button>
+				<form>
+					<label for="text-input"></label>
+					<input type="text" id="text-input" placeholder="Add Todo" />
+					<label for="priority-selector">Task Priority:</label>
+					<select name="task-priority" id="priority-selector">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+					<button id="add-button">Add Task</button>
+				</form>
 			</section>
-			<section class="main-section"></section>
+			<section class="view-section"></section>
 		</div>
 		<script src="./main.js"></script>
 	</body>
