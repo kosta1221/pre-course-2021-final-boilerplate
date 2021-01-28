@@ -33,3 +33,18 @@ form > * {
 .view-section {
 	margin: auto;
 }
+
+.todo-priority {
+	display: inline;
+	margin: 0 0.5rem;
+}
+
+.todo-created-at {
+	display: inline;
+	margin: 0 0.5rem;
+}
+
+.todo-text {
+	display: inline;
+	margin: 0 0.5rem;
+}
