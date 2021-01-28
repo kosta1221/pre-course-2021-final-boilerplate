@@ -68,5 +68,19 @@ function addAndDisplayTodo() {
 
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
+
 	addAndDisplayTodo();
+	todoForm.reset();
+});
+
+/* These 2 listeners below are used for custom validation message for my input. Inspiration from - https://stackoverflow.com/questions/5272433/html5-form-required-attribute-set-custom-validation-message */
+textInput.addEventListener("invalid", (event) => {
+	event.target.setCustomValidity("");
+	if (!event.target.validity.valid) {
+		event.target.setCustomValidity("You need your task to have a name, bro");
+	}
+});
+
+textInput.addEventListener("input", (event) => {
+	event.target.setCustomValidity("");
 });
