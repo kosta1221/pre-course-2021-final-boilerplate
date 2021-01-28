@@ -4,7 +4,10 @@ const addButton = document.querySelector("#add-button");
 const textInput = document.querySelector("#text-input");
 const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
+const counter = document.querySelector("#counter");
+
 const todoList = [];
+let todoCount = 0;
 
 /* A function for padding numbers to 2 digits. This is necessary for Date.gethours(), Date.getMinutes, etc. */
 function twoDigits(number) {
@@ -66,10 +69,19 @@ function addAndDisplayTodo() {
 	todoText.innerText = todo.todoText;
 }
 
+function incrementAndDisplayTodoCount(add) {
+	if (add) {
+		counter.innerText = "You Have " + ++todoCount + " Todos";
+	} else if (!add) {
+		counter.innerText = "You Have " + --todoCount + " Todos";
+	}
+}
+
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
 	addAndDisplayTodo();
+	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
 });
 

@@ -9,12 +9,27 @@ body {
 	background-color: powderblue;
 }
 
+header {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+}
+
+header > * {
+	margin: 2vmin 0;
+}
+
 button {
 	padding: 0 0.5rem;
 }
 
 form > * {
 	margin: 0 0.5rem;
+}
+
+#secondary-header-content > * {
+	display: inline;
+	margin: 0 1.5rem;
 }
 
 #page-wrapper {
