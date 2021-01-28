@@ -85,6 +85,18 @@ function sortTodosAndRearrangeViewSection() {
 		return a.todoPriority - b.todoPriority;
 	});
 	console.log(todoList);
+
+	let todoListIterator = todoList.length - 1;
+
+	for (const todoContainer of document.getElementsByClassName("todo-container")) {
+		console.log(todoContainer);
+
+		todoContainer.children[0].innerText = todoList[todoListIterator].todoPriority;
+		todoContainer.children[1].innerText = todoList[todoListIterator].todoCreatedAt;
+		todoContainer.children[2].innerText = todoList[todoListIterator].todoText;
+
+		todoListIterator--;
+	}
 }
 
 todoForm.addEventListener("submit", (event) => {
