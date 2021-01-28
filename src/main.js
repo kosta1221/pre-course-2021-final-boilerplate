@@ -5,8 +5,9 @@ const textInput = document.querySelector("#text-input");
 const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
+const sortButton = document.querySelector("#sort-button");
 
-const todoList = [];
+let todoList = [];
 let todoCount = 0;
 
 /* A function for padding numbers to 2 digits. This is necessary for Date.gethours(), Date.getMinutes, etc. */
@@ -45,8 +46,8 @@ function createTodo() {
 
 /* A function for adding todo's to todo list and displaying them on the page */
 function addAndDisplayTodo() {
-	todoList.unshift(createTodo());
-	const todo = todoList[0];
+	todoList.push(createTodo());
+	const todo = todoList[todoList.length - 1];
 	console.log(todo);
 
 	const todoContainer = document.createElement("div");
@@ -69,6 +70,7 @@ function addAndDisplayTodo() {
 	todoText.innerText = todo.todoText;
 }
 
+/* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
 function incrementAndDisplayTodoCount(add) {
 	if (add) {
 		counter.innerText = "You Have " + ++todoCount + " Todos";
@@ -77,12 +79,25 @@ function incrementAndDisplayTodoCount(add) {
 	}
 }
 
+/* A function for sorting todoList array and rearranging the corresponding HTML elements on the page */
+function sortTodosAndRearrangeViewSection() {
+	todoList = todoList.sort(function (a, b) {
+		return a.todoPriority - b.todoPriority;
+	});
+	console.log(todoList);
+}
+
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
 	addAndDisplayTodo();
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
+});
+
+sortButton.addEventListener("click", () => {
+	console.log(JSON.stringify(todoList));
+	sortTodosAndRearrangeViewSection();
 });
 
 /* These 2 listeners below are used for custom validation message for my input. Inspiration from - https://stackoverflow.com/questions/5272433/html5-form-required-attribute-set-custom-validation-message */
