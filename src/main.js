@@ -15,6 +15,7 @@ async function loadDataFromApi() {
 	const loadedDataArray = await getPersistent(API_KEY);
 	todoList = loadedDataArray;
 	todoCount = todoList.length;
+	console.log(todoList);
 }
 
 loadDataFromApi();
@@ -29,31 +30,34 @@ function twoDigits(number) {
 	return number.toString();
 }
 
-/* A function for converting date objects to my mySQL format strings */
-function toMySqlFormat(date) {
+/* A function for converting date objects to my mySQL format strings (local time) */
+function toMySqlFormat(dateInMS) {
+	const dateObject = new Date(dateInMS);
+
 	return (
-		date.getUTCFullYear() +
+		dateObject.getFullYear() +
 		"-" +
-		twoDigits(1 + date.getUTCMonth()) +
+		twoDigits(1 + dateObject.getMonth()) +
 		"-" +
-		twoDigits(date.getUTCDate()) +
+		twoDigits(dateObject.getDate()) +
 		" " +
-		twoDigits(date.getUTCHours()) +
+		twoDigits(dateObject.getHours()) +
 		":" +
-		twoDigits(date.getUTCMinutes()) +
+		twoDigits(dateObject.getMinutes()) +
 		":" +
-		twoDigits(date.getUTCSeconds())
+		twoDigits(dateObject.getSeconds())
 	);
 }
 
 /* A function for pushing todo tasks to todoList*/
-function pushTodo(todoText, todoCreatedAt, todoPriority) {
-	todoList.push({ todoText, todoCreatedAt, todoPriority });
+function pushTodo(text, priority, date) {
+	todoList.push({ text, priority, date });
 }
 
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
 function displayTodo(todo = todoList[todoList.length - 1]) {
 	console.log(todo);
+	console.log(todoList);
 
 	const todoContainer = document.createElement("div");
 	todoContainer.classList.add("todo-container");
@@ -62,17 +66,17 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 	const todoPriority = document.createElement("div");
 	todoPriority.classList.add("todo-priority");
 	todoContainer.appendChild(todoPriority);
-	todoPriority.innerText = todo.todoPriority;
+	todoPriority.innerText = todo.priority;
 
 	const todoCreatedAt = document.createElement("div");
 	todoCreatedAt.classList.add("todo-created-at");
 	todoContainer.appendChild(todoCreatedAt);
-	todoCreatedAt.innerText = todo.todoCreatedAt;
+	todoCreatedAt.innerText = toMySqlFormat(todo.date);
 
 	const todoText = document.createElement("div");
 	todoText.classList.add("todo-text");
 	todoContainer.appendChild(todoText);
-	todoText.innerText = todo.todoText;
+	todoText.innerText = todo.text;
 }
 
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
@@ -108,9 +112,10 @@ todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
 	let todoText = textInput.value;
-	let todoCreatedAt = toMySqlFormat(new Date());
 	let todoPriority = prioritySelector.value;
-	pushTodo(todoText, todoCreatedAt, todoPriority);
+	let todoCreatedAt = new Date().getTime();
+
+	pushTodo(todoText, todoPriority, todoCreatedAt);
 
 	displayTodo();
 	incrementAndDisplayTodoCount(true);
