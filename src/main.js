@@ -14,11 +14,13 @@ let todoCount = 0;
 async function loadDataFromApi() {
 	const loadedDataArray = await getPersistent(API_KEY);
 	todoList = loadedDataArray;
-	todoCount = todoList.length;
 	console.log(todoList);
+	console.log(todoCount);
 
 	for (todo of todoList) {
 		displayTodo(todo);
+		incrementAndDisplayTodoCount(true);
+		console.log(todoCount);
 	}
 }
 
