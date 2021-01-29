@@ -12,15 +12,20 @@ let todoCount = 0;
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
-	const loadedDataArray = await getPersistent(API_KEY);
-	todoList = loadedDataArray;
+	const loadedData = await getPersistent(API_KEY);
+	if (Array.isArray(loadedData.record)) {
+		todoList = loadedData.record;
+	} else if (loadedData.record) todoList.push(loadedData.record);
+
 	console.log(todoList);
 	console.log(todoCount);
 
-	for (todo of todoList) {
-		displayTodo(todo);
-		incrementAndDisplayTodoCount(true);
-		console.log(todoCount);
+	if (todoList.length > 0) {
+		for (todo of todoList) {
+			displayTodo(todo);
+			incrementAndDisplayTodoCount(true);
+			console.log(todoCount);
+		}
 	}
 }
 
@@ -56,8 +61,11 @@ function toMySqlFormat(dateInMS) {
 }
 
 /* A function for pushing todo tasks to todoList*/
-function pushTodo(text, priority, date) {
-	todoList.push({ text, priority, date });
+async function pushTodo(text, priority, date) {
+	const dataToPush = { text, priority, date };
+
+	todoList.push(dataToPush);
+	await setPersistent(API_KEY, todoList);
 }
 
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
