@@ -13,9 +13,10 @@ let todoCount = 0;
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
 	const loadedData = await getPersistent(API_KEY);
-	if (Array.isArray(loadedData.record)) {
-		todoList = loadedData.record;
-	} else if (loadedData.record) todoList.push(loadedData.record);
+	console.log(loadedData);
+	if (Array.isArray(loadedData.record["my-todo"])) {
+		todoList = loadedData.record["my-todo"];
+	} else if (loadedData.record["my-todo"]) todoList.push(loadedData.record["my-todo"]);
 
 	console.log(todoList);
 	console.log(todoCount);
@@ -62,9 +63,9 @@ function toMySqlFormat(dateInMS) {
 
 /* A function for pushing todo tasks to todoList*/
 async function pushTodo(text, priority, date) {
-	const dataToPush = { text, priority, date };
+	/* const dataToPush = { text, priority, date };
+	todoList.push(dataToPush); */
 
-	todoList.push(dataToPush);
 	await setPersistent(API_KEY, todoList);
 }
 
@@ -96,16 +97,16 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
 function incrementAndDisplayTodoCount(add) {
 	if (add) {
-		counter.innerText = "You Have " + ++todoCount + " Todos";
+		counter.innerText = ++todoCount;
 	} else if (!add) {
-		counter.innerText = "You Have " + --todoCount + " Todos";
+		counter.innerText = --todoCount;
 	}
 }
 
 /* A function for sorting todoList array and rearranging the corresponding HTML elements on the page */
 function sortTodosAndRearrangeViewSection() {
 	todoList = todoList.sort(function (a, b) {
-		return a.todoPriority - b.todoPriority;
+		return a.priority - b.priority;
 	});
 	console.log(todoList);
 
@@ -114,9 +115,9 @@ function sortTodosAndRearrangeViewSection() {
 	for (const todoContainer of document.getElementsByClassName("todo-container")) {
 		console.log(todoContainer);
 
-		todoContainer.children[0].innerText = todoList[todoListIterator].todoPriority;
-		todoContainer.children[1].innerText = todoList[todoListIterator].todoCreatedAt;
-		todoContainer.children[2].innerText = todoList[todoListIterator].todoText;
+		todoContainer.children[0].innerText = todoList[todoListIterator].priority;
+		todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
+		todoContainer.children[2].innerText = todoList[todoListIterator].text;
 
 		todoListIterator--;
 	}
@@ -129,9 +130,12 @@ todoForm.addEventListener("submit", (event) => {
 	let todoPriority = prioritySelector.value;
 	let todoCreatedAt = new Date().getTime();
 
+	const dataToPush = { text: todoText, priority: todoPriority, date: todoCreatedAt };
+	todoList.push(dataToPush);
+	displayTodo();
+
 	pushTodo(todoText, todoPriority, todoCreatedAt);
 
-	displayTodo();
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
 });

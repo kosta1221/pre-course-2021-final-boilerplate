@@ -28,12 +28,12 @@ async function setPersistent(key, data) {
 				"X-MASTER-KEY": key,
 				"Content-Type": "application/json;charset=utf-8",
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify({ "my-todo": data }),
 		});
 
 		let result = await response.json();
 		console.log(result);
-		alert(result.message);
+		console.log(result.message);
 	} catch (error) {
 		alert(error);
 	}
