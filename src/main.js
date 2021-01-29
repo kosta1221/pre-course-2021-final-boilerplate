@@ -10,6 +10,17 @@ const sortButton = document.querySelector("#sort-button");
 let todoList = [];
 let todoCount = 0;
 
+/* A function for loading data from Jsonbin.io */
+async function loadDataFromApi() {
+	const loadedDataArray = await getPersistent(API_KEY);
+	todoList = loadedDataArray;
+	todoCount = todoList.length;
+}
+
+loadDataFromApi();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /* A function for padding numbers to 2 digits. This is necessary for Date.gethours(), Date.getMinutes, etc. */
 function twoDigits(number) {
 	if (0 <= number && number < 10) {
@@ -35,19 +46,13 @@ function toMySqlFormat(date) {
 	);
 }
 
-/* A function for creating todo tasks */
-function createTodo() {
-	let todoText = textInput.value;
-	let todoCreatedAt = toMySqlFormat(new Date());
-	let todoPriority = prioritySelector.value;
-
-	return { todoText, todoCreatedAt, todoPriority };
+/* A function for pushing todo tasks to todoList*/
+function pushTodo(todoText, todoCreatedAt, todoPriority) {
+	todoList.push({ todoText, todoCreatedAt, todoPriority });
 }
 
-/* A function for adding todo's to todo list and displaying them on the page */
-function addAndDisplayTodo() {
-	todoList.push(createTodo());
-	const todo = todoList[todoList.length - 1];
+/* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
+function displayTodo(todo = todoList[todoList.length - 1]) {
 	console.log(todo);
 
 	const todoContainer = document.createElement("div");
@@ -102,7 +107,12 @@ function sortTodosAndRearrangeViewSection() {
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
-	addAndDisplayTodo();
+	let todoText = textInput.value;
+	let todoCreatedAt = toMySqlFormat(new Date());
+	let todoPriority = prioritySelector.value;
+	pushTodo(todoText, todoCreatedAt, todoPriority);
+
+	displayTodo();
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
 });
