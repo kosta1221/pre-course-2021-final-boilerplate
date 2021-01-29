@@ -16,6 +16,10 @@ async function loadDataFromApi() {
 	todoList = loadedDataArray;
 	todoCount = todoList.length;
 	console.log(todoList);
+
+	for (todo of todoList) {
+		displayTodo(todo);
+	}
 }
 
 loadDataFromApi();
