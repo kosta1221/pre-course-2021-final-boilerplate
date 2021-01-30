@@ -16,7 +16,7 @@ const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
 const deletedTodos = [];
 let todoList = [];
 let todoCount = 0;
-let sortingOrder = true; // true for descending, false for ascending
+let sortingOrder = false; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
@@ -164,6 +164,16 @@ function sortTodosAndRearrangeViewSection() {
 		console.log(todoContainer);
 
 		todoContainer.children[0].innerText = todoList[todoListIterator].priority;
+		console.log(
+			todoListIterator + "'s Original date in ms: " + todoContainer.children[1].dataset.dateMs
+		);
+
+		todoContainer.children[1].dataset.dateMs = todoList[todoListIterator].date;
+
+		console.log(
+			todoListIterator + "'s date in ms after sort: " + todoContainer.children[1].dataset.dateMs
+		);
+
 		todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
 		todoContainer.children[2].innerText = todoList[todoListIterator].text;
 
