@@ -7,6 +7,7 @@ const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
 const sortButton = document.querySelector("#sort-button");
 
+const deletedTodos = [];
 let todoList = [];
 let todoCount = 0;
 
@@ -69,6 +70,27 @@ async function pushTodo(text, priority, date) {
 	await setPersistent(API_KEY, todoList);
 }
 
+/* A function for finding an index of an object in an array based on a value of its property */
+function findIndexOfObjectWithProperty(array, prop, value) {
+	for (let i = 0; i < array.length; i++) {
+		if (array[i][prop] == value) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+/* A function for deleting a todo based on its date in milliseconds */
+async function deleteTodoByDateInMs(dateInMS) {
+	const indexOfTodoToDelete = findIndexOfObjectWithProperty(todoList, "date", dateInMS);
+	console.log(indexOfTodoToDelete);
+	if (indexOfTodoToDelete > -1) {
+		deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
+	}
+	console.log(deletedTodos);
+	console.log(todoList);
+}
+
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
 function displayTodo(todo = todoList[todoList.length - 1]) {
 	console.log(todo);
@@ -85,6 +107,8 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 
 	const todoCreatedAt = document.createElement("div");
 	todoCreatedAt.classList.add("todo-created-at");
+	todoCreatedAt.setAttribute("data-date-ms", todo.date);
+	console.log(todoCreatedAt.dataset.dateMs); // Attributes are converted to camelCase
 	todoContainer.appendChild(todoCreatedAt);
 	todoCreatedAt.innerText = toMySqlFormat(todo.date);
 
@@ -146,6 +170,7 @@ todoForm.addEventListener("submit", (event) => {
 	todoForm.reset();
 });
 
+/* Event listener for sort button (sorting todo's) */
 sortButton.addEventListener("click", () => {
 	console.log(JSON.stringify(todoList));
 	sortTodosAndRearrangeViewSection();
@@ -155,8 +180,16 @@ sortButton.addEventListener("click", () => {
 viewSection.addEventListener("click", (event) => {
 	const closestDeleteButton = event.target.closest(".delete-button");
 	if (closestDeleteButton) {
-		console.log(closestDeleteButton.parentNode);
-		closestDeleteButton.parentNode.remove();
+		const correspondingTodo = closestDeleteButton.parentNode;
+		console.log(correspondingTodo);
+
+		const dateOfCorrespondingTodoInMs = correspondingTodo.querySelector(".todo-created-at").dataset
+			.dateMs;
+		console.log(dateOfCorrespondingTodoInMs);
+
+		deleteTodoByDateInMs(dateOfCorrespondingTodoInMs);
+
+		correspondingTodo.remove();
 	}
 });
 
