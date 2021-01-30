@@ -128,6 +128,7 @@ function sortTodosAndRearrangeViewSection() {
 	}
 }
 
+/* Event listener for the "Add Task" button */
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
 
@@ -148,6 +149,15 @@ todoForm.addEventListener("submit", (event) => {
 sortButton.addEventListener("click", () => {
 	console.log(JSON.stringify(todoList));
 	sortTodosAndRearrangeViewSection();
+});
+
+/* Event listener for delete buttons (deleting todo's) */
+viewSection.addEventListener("click", (event) => {
+	const closestDeleteButton = event.target.closest(".delete-button");
+	if (closestDeleteButton) {
+		console.log(closestDeleteButton.parentNode);
+		closestDeleteButton.parentNode.remove();
+	}
 });
 
 /* These 2 listeners below are used for custom validation message for my input. Inspiration from - https://stackoverflow.com/questions/5272433/html5-form-required-attribute-set-custom-validation-message */
