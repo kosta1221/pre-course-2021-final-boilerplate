@@ -47,6 +47,7 @@ form > * {
 
 .view-section {
 	margin: auto;
+	padding-bottom: 1vmax;
 }
 
 .todo-priority {
@@ -62,4 +63,13 @@ form > * {
 .todo-text {
 	display: inline;
 	margin: 0 0.5rem;
+}
+
+.delete-button {
+	float: right;
+	margin-right: 3vw;
+}
+
+.todo-container {
+	margin: 0.4rem 0;
 }

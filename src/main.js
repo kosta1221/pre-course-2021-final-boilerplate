@@ -63,9 +63,9 @@ function toMySqlFormat(dateInMS) {
 
 /* A function for pushing todo tasks to todoList*/
 async function pushTodo(text, priority, date) {
-	/* const dataToPush = { text, priority, date };
-	todoList.push(dataToPush); */
+	const dataToPush = { text, priority, date };
 
+	todoList.push(dataToPush);
 	await setPersistent(API_KEY, todoList);
 }
 
@@ -92,6 +92,11 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 	todoText.classList.add("todo-text");
 	todoContainer.appendChild(todoText);
 	todoText.innerText = todo.text;
+
+	const deleteButton = document.createElement("button");
+	deleteButton.classList.add("delete-button");
+	todoContainer.appendChild(deleteButton);
+	deleteButton.innerText = "Delete";
 }
 
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
@@ -130,11 +135,11 @@ todoForm.addEventListener("submit", (event) => {
 	let todoPriority = prioritySelector.value;
 	let todoCreatedAt = new Date().getTime();
 
-	const dataToPush = { text: todoText, priority: todoPriority, date: todoCreatedAt };
-	todoList.push(dataToPush);
-	displayTodo();
+	/* const dataToPush = { text: todoText, priority: todoPriority, date: todoCreatedAt }; */
 
 	pushTodo(todoText, todoPriority, todoCreatedAt);
+
+	displayTodo();
 
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
