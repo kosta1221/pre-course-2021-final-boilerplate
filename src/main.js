@@ -6,10 +6,17 @@ const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
 const sortButton = document.querySelector("#sort-button");
+const sortingMethodSelector = document.querySelector("#sorting-method-selector");
+const sortingOrderButton = document.querySelector("#sorting-order-button");
+const sortingImage = document.querySelector("#sorting-image");
+
+const RED_ARROW_DOWN_SRC = "/images/240px-Red_Arrow_Down.svg.png";
+const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
 
 const deletedTodos = [];
 let todoList = [];
 let todoCount = 0;
+let sortingOrder = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
@@ -132,21 +139,23 @@ function incrementAndDisplayTodoCount(add) {
 		counter.innerText = --todoCount;
 	}
 }
-function sortingSpecifier(largestToSmallest) {
+
+/* A function which determines in which order to perform a sort by a boolean parameter. Note that it returns a function which I used to override Array.sort's default sorting method. */
+function sortingSpecifier(largestToSmallest, property) {
 	if (largestToSmallest) {
 		return function (a, b) {
-			return b.priority - a.priority;
+			return b[property] - a[property];
 		};
 	} else if (!largestToSmallest) {
 		return function (a, b) {
-			return a.priority - b.priority;
+			return a[property] - b[property];
 		};
 	}
 }
 
 /* A function for sorting todoList array and rearranging the corresponding HTML elements on the page */
 function sortTodosAndRearrangeViewSection() {
-	todoList = todoList.sort(sortingSpecifier(false));
+	todoList = todoList.sort(sortingSpecifier(sortingOrder, sortingMethodSelector.value));
 	console.log(todoList);
 
 	let todoListIterator = 0;
@@ -178,6 +187,27 @@ todoForm.addEventListener("submit", (event) => {
 
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
+});
+
+/* Event listener for sorting-order-button */
+sortingOrderButton.addEventListener("click", (event) => {
+	console.log(sortingImage);
+	if (sortingImage.src.includes(RED_ARROW_DOWN_SRC)) {
+		console.log(sortingImage.src);
+
+		sortingImage.src = sortingImage.src.replace(RED_ARROW_DOWN_SRC, GREEN_ARROW_UP_SRC);
+		sortingOrder = false;
+
+		console.log(sortingImage.src);
+	} else if (sortingImage.src.includes(GREEN_ARROW_UP_SRC)) {
+		console.log(sortingImage.src);
+
+		sortingImage.src = sortingImage.src.replace(GREEN_ARROW_UP_SRC, RED_ARROW_DOWN_SRC);
+		sortingOrder = true;
+
+		console.log(sortingImage.src);
+	}
+	console.log("sorting order:" + sortingOrder);
 });
 
 /* Event listener for sort button (sorting todo's) */

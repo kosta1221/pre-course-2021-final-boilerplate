@@ -12,6 +12,7 @@ async function getPersistent(key) {
 
 	if (response.ok) {
 		let json = await response.json();
+		console.log("JSONbin Loaded Successfully");
 		return json;
 	} else {
 		alert("HTTP-Error: " + response.status);

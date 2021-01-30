@@ -29,7 +29,16 @@ form > * {
 
 #secondary-header-content > * {
 	display: inline;
-	margin: 0 1.5rem;
+	margin: auto 1.1rem;
+}
+
+#sorting-label-and-selector > * {
+	margin: auto 0.2rem;
+}
+
+#sorting-order-button {
+	padding: 0;
+	margin: 0;
 }
 
 #page-wrapper {
@@ -72,4 +81,9 @@ form > * {
 
 .todo-container {
 	margin: 0.4rem 0;
+}
+
+.logo {
+	height: 14px;
+	width: 15px;
 }
