@@ -33,7 +33,7 @@ async function setPersistent(key, data) {
 
 		let result = await response.json();
 		console.log(result);
-		console.log(result.message);
+		console.log("Request Successful");
 	} catch (error) {
 		alert(error);
 	}

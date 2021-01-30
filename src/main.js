@@ -86,6 +86,7 @@ async function deleteTodoByDateInMs(dateInMS) {
 	console.log(indexOfTodoToDelete);
 	if (indexOfTodoToDelete > -1) {
 		deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
+		await setPersistent(API_KEY, todoList);
 	}
 	console.log(deletedTodos);
 	console.log(todoList);
@@ -131,15 +132,24 @@ function incrementAndDisplayTodoCount(add) {
 		counter.innerText = --todoCount;
 	}
 }
+function sortingSpecifier(largestToSmallest) {
+	if (largestToSmallest) {
+		return function (a, b) {
+			return b.priority - a.priority;
+		};
+	} else if (!largestToSmallest) {
+		return function (a, b) {
+			return a.priority - b.priority;
+		};
+	}
+}
 
 /* A function for sorting todoList array and rearranging the corresponding HTML elements on the page */
 function sortTodosAndRearrangeViewSection() {
-	todoList = todoList.sort(function (a, b) {
-		return a.priority - b.priority;
-	});
+	todoList = todoList.sort(sortingSpecifier(false));
 	console.log(todoList);
 
-	let todoListIterator = todoList.length - 1;
+	let todoListIterator = 0;
 
 	for (const todoContainer of document.getElementsByClassName("todo-container")) {
 		console.log(todoContainer);
@@ -148,7 +158,7 @@ function sortTodosAndRearrangeViewSection() {
 		todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
 		todoContainer.children[2].innerText = todoList[todoListIterator].text;
 
-		todoListIterator--;
+		todoListIterator++;
 	}
 }
 
