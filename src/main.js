@@ -29,7 +29,7 @@ async function loadDataFromApi() {
 	console.log(todoList);
 	console.log(todoCount);
 
-	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used tochange  default sort of todoList upon page load.
+	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
 	/* todoList = todoList.sort(sortingSpecifier(true, "priority"));
 	console.log(todoList); */
 
@@ -133,6 +133,11 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 	deleteButton.classList.add("delete-button");
 	todoContainer.appendChild(deleteButton);
 	deleteButton.innerText = "Delete";
+
+	const completeTodoButton = document.createElement("button");
+	completeTodoButton.classList.add("complete-todo-button");
+	todoContainer.appendChild(completeTodoButton);
+	completeTodoButton.innerText = "✔";
 }
 
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */

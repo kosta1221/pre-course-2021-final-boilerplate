@@ -59,6 +59,11 @@ form > * {
 	padding-bottom: 1vmax;
 }
 
+.completed-todos {
+	margin: auto;
+	padding-bottom: 1vmax;
+}
+
 .todo-priority {
 	display: inline;
 	margin: 0 0.5rem;
@@ -77,6 +82,11 @@ form > * {
 .delete-button {
 	float: right;
 	margin-right: 3vw;
+}
+
+.complete-todo-button {
+	float: right;
+	margin-right: 1vw;
 }
 
 .todo-container {
