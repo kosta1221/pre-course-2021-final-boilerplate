@@ -16,7 +16,7 @@ const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
 const deletedTodos = [];
 let todoList = [];
 let todoCount = 0;
-let sortingOrder = false; // true for descending, false for ascending
+let sortingOrder = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
@@ -28,6 +28,10 @@ async function loadDataFromApi() {
 
 	console.log(todoList);
 	console.log(todoCount);
+
+	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used tochange  default sort of todoList upon page load.
+	/* todoList = todoList.sort(sortingSpecifier(true, "priority"));
+	console.log(todoList); */
 
 	if (todoList.length > 0) {
 		for (todo of todoList) {
