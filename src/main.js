@@ -1,16 +1,27 @@
+/* DOM Elements declaration */
 const controlSection = document.querySelector(".control-section");
 const viewSection = document.querySelector(".view-section");
-const completedTodosSection = document.querySelector(".completed-todos-section");
 const addButton = document.querySelector("#add-button");
 const textInput = document.querySelector("#text-input");
 const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
-const completedCounter = document.querySelector("#completed-counter");
 const sortButton = document.querySelector("#sort-button");
 const sortingMethodSelector = document.querySelector("#sorting-method-selector");
 const sortingOrderButton = document.querySelector("#sorting-order-button");
 const sortingImage = document.querySelector("#sorting-image");
+
+/* DOM Elements for completed todo's */
+const completedTodosSection = document.querySelector(".completed-todos-section");
+const completedCounter = document.querySelector("#completed-counter");
+const sortingMethodSelectorForCompleted = document.querySelector(
+	"#sorting-method-selector-for-completed"
+);
+const sortButtonForCompleted = document.querySelector("#sort-button-for-completed");
+const sortingOrderButtonForCompleted = document.querySelector(
+	"#sorting-order-button-for-completed"
+);
+const sortingImageForCompleted = document.querySelector("#sorting-image-for-completed");
 
 const RED_ARROW_DOWN_SRC = "/images/240px-Red_Arrow_Down.svg.png";
 const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
@@ -21,11 +32,14 @@ let completedTodos = [];
 let todoCount = 0;
 let completedTodoCount = 0;
 let sortingOrder = true; // true for descending, false for ascending
+let sortingOrderForCompleted = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
 	const loadedData = await getPersistent(API_KEY);
+	console.log("Promise received (loaded data): ");
 	console.log(loadedData);
+
 	if (Array.isArray(loadedData.record["my-todo"])) {
 		todoList = loadedData.record["my-todo"];
 	} else if (loadedData.record["my-todo"]) {
@@ -37,10 +51,12 @@ async function loadDataFromApi() {
 	} else if (loadedData.record["completed-todos"]) {
 		completedTodos.push(loadedData.record["completed-todos"]);
 	}
-
+	console.log("todoList: ");
 	console.log(todoList);
+	console.log("completedTodos: ");
 	console.log(completedTodos);
-	console.log(todoCount);
+	console.log("todoCount: " + todoCount);
+	console.log("completedTodoCount: " + todoCount);
 
 	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
 	/* todoList = todoList.sort(sortingSpecifier(true, "priority"));
@@ -50,7 +66,7 @@ async function loadDataFromApi() {
 		for (todo of todoList) {
 			displayTodo(false, todo);
 			incrementAndDisplayTodoCount(true);
-			console.log(todoCount);
+			console.log("todoCount: " + todoCount);
 		}
 	}
 
@@ -58,7 +74,7 @@ async function loadDataFromApi() {
 		for (completedTodo of completedTodos) {
 			displayTodo(true, completedTodo);
 			incrementAndDisplayCompletedTodoCount(true);
-			console.log(completedCounter);
+			console.log("completedTodoCount: " + completedTodoCount);
 		}
 	}
 }
@@ -144,8 +160,8 @@ async function deleteTodoByDateInMs(isCompleted, dateInMS) {
 
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
 function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
+	console.log("Todo to be displayed: ");
 	console.log(todo);
-	console.log(todoList);
 
 	const todoContainer = document.createElement("div");
 	todoContainer.classList.add("todo-container");
@@ -163,6 +179,9 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 	const todoCreatedAt = document.createElement("div");
 	todoCreatedAt.classList.add("todo-created-at");
 	todoCreatedAt.setAttribute("data-date-ms", todo.date);
+	console.log(
+		"The following number is todo-created-at's data-date-ms which should be equal to todo's date in ms:"
+	);
 	console.log(todoCreatedAt.dataset.dateMs); // Attributes are converted to camelCase
 	todoContainer.appendChild(todoCreatedAt);
 	todoCreatedAt.innerText = toMySqlFormat(todo.date);
@@ -217,34 +236,72 @@ function sortingSpecifier(largestToSmallest, property) {
 }
 
 /* A function for sorting todoList array and rearranging the corresponding HTML elements on the page */
-function sortTodosAndRearrangeViewSection() {
-	todoList = todoList.sort(sortingSpecifier(sortingOrder, sortingMethodSelector.value));
-	console.log(todoList);
+function sortTodosAndRearrangeViewSection(isCompleted) {
+	if (!isCompleted) {
+		todoList = todoList.sort(sortingSpecifier(sortingOrder, sortingMethodSelector.value));
+		console.log(todoList);
 
-	let todoListIterator = 0;
+		let todoListIterator = 0;
 
-	for (const todoContainer of document.getElementsByClassName("todo-container")) {
-		console.log(todoContainer);
+		console.log(viewSection.getElementsByClassName("todo-container"));
 
-		todoContainer.children[0].innerText = todoList[todoListIterator].priority;
-		console.log(
-			todoListIterator + "'s Original date in ms: " + todoContainer.children[1].dataset.dateMs
+		for (const todoContainer of viewSection.getElementsByClassName("todo-container")) {
+			console.log(todoContainer);
+
+			todoContainer.children[0].innerText = todoList[todoListIterator].priority;
+			console.log(
+				todoListIterator + "'s Original date in ms: " + todoContainer.children[1].dataset.dateMs
+			);
+
+			todoContainer.children[1].dataset.dateMs = todoList[todoListIterator].date;
+
+			console.log(
+				todoListIterator + "'s date in ms after sort: " + todoContainer.children[1].dataset.dateMs
+			);
+
+			todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
+			todoContainer.children[2].innerText = todoList[todoListIterator].text;
+
+			todoListIterator++;
+		}
+	} else if (isCompleted) {
+		// Same thing but with relevance to completed-todos-section
+		completedTodos = completedTodos.sort(
+			sortingSpecifier(sortingOrderForCompleted, sortingMethodSelectorForCompleted.value)
 		);
+		console.log(completedTodos);
 
-		todoContainer.children[1].dataset.dateMs = todoList[todoListIterator].date;
+		let completedTodosIterator = 0;
 
-		console.log(
-			todoListIterator + "'s date in ms after sort: " + todoContainer.children[1].dataset.dateMs
-		);
+		console.log(completedTodosSection.getElementsByClassName("todo-container"));
 
-		todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
-		todoContainer.children[2].innerText = todoList[todoListIterator].text;
+		for (const todoContainer of completedTodosSection.getElementsByClassName("todo-container")) {
+			console.log(todoContainer);
 
-		todoListIterator++;
+			todoContainer.children[0].innerText = completedTodos[completedTodosIterator].priority;
+			console.log(
+				completedTodosIterator +
+					"'s Original date in ms: " +
+					todoContainer.children[1].dataset.dateMs
+			);
+
+			todoContainer.children[1].dataset.dateMs = completedTodos[completedTodosIterator].date;
+
+			console.log(
+				completedTodosIterator +
+					"'s date in ms after sort: " +
+					todoContainer.children[1].dataset.dateMs
+			);
+
+			todoContainer.children[1].innerText = toMySqlFormat(
+				completedTodos[completedTodosIterator].date
+			);
+			todoContainer.children[2].innerText = completedTodos[completedTodosIterator].text;
+
+			completedTodosIterator++;
+		}
 	}
 }
-
-function deleteToDoHandler(event) {}
 
 /* Event listener for the "Add Task" button */
 todoForm.addEventListener("submit", (event) => {
@@ -285,10 +342,42 @@ sortingOrderButton.addEventListener("click", (event) => {
 	console.log("sorting order:" + sortingOrder);
 });
 
+/* Event listener for sorting-order-button-for-completed */
+sortingOrderButtonForCompleted.addEventListener("click", (event) => {
+	console.log(sortingImageForCompleted);
+	if (sortingImageForCompleted.src.includes(RED_ARROW_DOWN_SRC)) {
+		console.log(sortingImageForCompleted.src);
+
+		sortingImageForCompleted.src = sortingImageForCompleted.src.replace(
+			RED_ARROW_DOWN_SRC,
+			GREEN_ARROW_UP_SRC
+		);
+		sortingOrderForCompleted = false;
+
+		console.log(sortingImageForCompleted.src);
+	} else if (sortingImageForCompleted.src.includes(GREEN_ARROW_UP_SRC)) {
+		console.log(sortingImageForCompleted.src);
+
+		sortingImageForCompleted.src = sortingImageForCompleted.src.replace(
+			GREEN_ARROW_UP_SRC,
+			RED_ARROW_DOWN_SRC
+		);
+		sortingOrderForCompleted = true;
+
+		console.log(sortingImageForCompleted.src);
+	}
+	console.log("sorting order:" + sortingOrderForCompleted);
+});
+
 /* Event listener for sort button (sorting todo's) */
 sortButton.addEventListener("click", () => {
 	console.log(JSON.stringify(todoList));
-	sortTodosAndRearrangeViewSection();
+	sortTodosAndRearrangeViewSection(false);
+});
+
+/* Event listener for sort-button-for-completed (sorting completed todo's) */
+sortButtonForCompleted.addEventListener("click", () => {
+	sortTodosAndRearrangeViewSection(true);
 });
 
 /* Event listener for delete buttons (deleting todo's) in view section*/
