@@ -552,7 +552,7 @@ const mouseMoveHandler = (event) => {
 	// placeholder
 	// nextElement
 	const previousElement = draggingElement.previousElementSibling;
-	const nextElement = placeholder.nextElementmentSibling;
+	const nextElement = placeholder.nextElementSibling;
 
 	// User moves the dragging element to the top
 	if (previousElement && isAbove(draggingElement, previousElement)) {
@@ -560,6 +560,7 @@ const mouseMoveHandler = (event) => {
 		// previousElement      -> placeholder
 		// draggingElement      -> draggingElement
 		// placeholder          -> previousElement
+
 		swap(placeholder, draggingElement);
 		swap(placeholder, previousElement);
 		return;
@@ -570,13 +571,14 @@ const mouseMoveHandler = (event) => {
 		// The current order    -> The new order
 		// draggingElement      -> nextElement
 		// placeholder          -> placeholder
-		// nextElement              -> draggingElement
+		// nextElement          -> draggingElement
+
 		swap(nextElement, placeholder);
 		swap(nextElement, draggingElement);
 	}
 };
 
-/* A function for checking which node is above between 2 given nodes */
+/* A function for checking if one node is above the other or not */
 const isAbove = function (nodeA, nodeB) {
 	// Get the bounding rectangle of nodes
 	const rectA = nodeA.getBoundingClientRect();
