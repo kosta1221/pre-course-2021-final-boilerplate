@@ -99,6 +99,11 @@ form > * {
 	width: 15px;
 }
 
+.draggable {
+	cursor: move;
+	user-select: none;
+}
+
 /* For completed section */
 
 #completed-todos-header-content > * {

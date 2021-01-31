@@ -165,6 +165,7 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 
 	const todoContainer = document.createElement("div");
 	todoContainer.classList.add("todo-container");
+	todoContainer.classList.add("draggable");
 	if (!isCompleted) {
 		viewSection.appendChild(todoContainer);
 	} else {
@@ -202,6 +203,9 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 		todoContainer.appendChild(completeTodoButton);
 		completeTodoButton.innerText = "✔";
 	}
+
+	// This is for adding mousedown handlers on todocontainers upon creation
+	todoContainer.addEventListener("mousedown", mouseDownHandler);
 }
 
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
@@ -454,3 +458,76 @@ textInput.addEventListener("invalid", (event) => {
 textInput.addEventListener("input", (event) => {
 	event.target.setCustomValidity("");
 });
+
+// The current dragging item
+let draggingElement;
+
+// The current position of mouse relative to the dragging element
+let x = 0;
+let y = 0;
+
+const mouseDownHandler = (event) => {
+	draggingElement = event.target;
+
+	/* Calculate the mouse position INSIDE of the element and RELATIVE to it- this is super helpful for understanding getBoundingClientRect() - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect */
+	const elementRectangle = draggingElement.getBoundingClientRect();
+	x = event.pageX - elementRectangle.left;
+	y = event.pageY - elementRectangle.top;
+
+	// Attach the listeners to `document`
+	document.addEventListener("mousemove", mouseMoveHandler);
+	document.addEventListener("mouseup", mouseUpHandler);
+};
+
+/* const mouseMoveHandler = (event) => {
+	// Set position for dragging element
+	draggingElement.style.position = "absolute";
+	draggingElement.style.top = `${event.pageY - y}px`;
+	draggingElement.style.left = `${event.pageX - x}px`;
+}; */
+
+const mouseUpHandler = () => {
+	// Remove the placeholder
+	placeholder && placeholder.parentNode.removeChild(placeholder);
+	// Reset the flag
+	isDraggingStarted = false;
+
+	// Remove the position styles
+	draggingElement.style.removeProperty("top");
+	draggingElement.style.removeProperty("left");
+	draggingElement.style.removeProperty("position");
+
+	x = null;
+	y = null;
+	draggingElement = null;
+
+	// Remove the handlers of `mousemove` and `mouseup`
+	document.removeEventListener("mousemove", mouseMoveHandler);
+	document.removeEventListener("mouseup", mouseUpHandler);
+};
+
+let placeholder;
+let isDraggingStarted = false;
+
+const mouseMoveHandler = (event) => {
+	const draggingElementRectangle = draggingElement.getBoundingClientRect();
+
+	if (!isDraggingStarted) {
+		// Update the flag
+		isDraggingStarted = true;
+
+		// Let the placeholder take the height of dragging element
+		// So the next element won't move up
+		placeholder = document.createElement("div");
+		placeholder.classList.add("placeholder");
+		draggingElement.parentNode.insertBefore(placeholder, draggingElement.nextSibling);
+
+		// Set the placeholder's height
+		placeholder.style.height = `${draggingElementRectangle.height}px`;
+	}
+
+	// Set position for dragging element
+	draggingElement.style.position = "absolute";
+	draggingElement.style.top = `${event.pageY - y}px`;
+	draggingElement.style.left = `${event.pageX - x}px`;
+};
