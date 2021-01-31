@@ -41,7 +41,7 @@ form > * {
 	margin: 0;
 }
 
-#page-wrapper {
+.wrapper-div {
 	width: 80vw;
 	margin: 2vh auto;
 	background-color: whitesmoke;
@@ -59,9 +59,10 @@ form > * {
 	padding-bottom: 1vmax;
 }
 
-.completed-todos {
+.completed-todos-section {
 	margin: auto;
-	padding-bottom: 1vmax;
+	padding: 1vmax 0;
+	margin-top: 5vmax;
 }
 
 .todo-priority {
@@ -96,4 +97,24 @@ form > * {
 .logo {
 	height: 14px;
 	width: 15px;
+}
+
+/* For completed section */
+
+#completed-todos-header-content > * {
+	display: inline;
+	margin: auto 1.1rem;
+}
+
+#completed-todos-header-content {
+	margin-bottom: 3vmax;
+}
+
+#sorting-label-and-selector-for-completed > * {
+	margin: auto 0.2rem;
+}
+
+#sorting-order-button-for-completed {
+	padding: 0;
+	margin: 0;
 }

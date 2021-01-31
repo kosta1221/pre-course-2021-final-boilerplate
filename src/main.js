@@ -1,10 +1,12 @@
 const controlSection = document.querySelector(".control-section");
 const viewSection = document.querySelector(".view-section");
+const completedTodosSection = document.querySelector(".completed-todos-section");
 const addButton = document.querySelector("#add-button");
 const textInput = document.querySelector("#text-input");
 const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
+const completedCounter = document.querySelector("#completed-counter");
 const sortButton = document.querySelector("#sort-button");
 const sortingMethodSelector = document.querySelector("#sorting-method-selector");
 const sortingOrderButton = document.querySelector("#sorting-order-button");
@@ -15,7 +17,9 @@ const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
 
 const deletedTodos = [];
 let todoList = [];
+let completedTodos = [];
 let todoCount = 0;
+let completedTodoCount = 0;
 let sortingOrder = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
@@ -24,9 +28,18 @@ async function loadDataFromApi() {
 	console.log(loadedData);
 	if (Array.isArray(loadedData.record["my-todo"])) {
 		todoList = loadedData.record["my-todo"];
-	} else if (loadedData.record["my-todo"]) todoList.push(loadedData.record["my-todo"]);
+	} else if (loadedData.record["my-todo"]) {
+		todoList.push(loadedData.record["my-todo"]);
+	}
+
+	if (Array.isArray(loadedData.record["completed-todos"])) {
+		completedTodos = loadedData.record["completed-todos"];
+	} else if (loadedData.record["completed-todos"]) {
+		completedTodos.push(loadedData.record["completed-todos"]);
+	}
 
 	console.log(todoList);
+	console.log(completedTodos);
 	console.log(todoCount);
 
 	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
@@ -35,9 +48,17 @@ async function loadDataFromApi() {
 
 	if (todoList.length > 0) {
 		for (todo of todoList) {
-			displayTodo(todo);
+			displayTodo(false, todo);
 			incrementAndDisplayTodoCount(true);
 			console.log(todoCount);
+		}
+	}
+
+	if (completedTodos.length > 0) {
+		for (completedTodo of completedTodos) {
+			displayTodo(true, completedTodo);
+			incrementAndDisplayCompletedTodoCount(true);
+			console.log(completedCounter);
 		}
 	}
 }
@@ -78,7 +99,14 @@ async function pushTodo(text, priority, date) {
 	const dataToPush = { text, priority, date };
 
 	todoList.push(dataToPush);
-	await setPersistent(API_KEY, todoList);
+	await setPersistent(API_KEY, todoList, completedTodos);
+}
+
+/* A function for pushing todo tasks to completedTodos */
+async function pushTodoToCompleted(text, priority, date) {
+	completedTodos.push({ text, priority, date, dateCompleted: new Date().getTime() });
+
+	await setPersistent(API_KEY, todoList, completedTodos);
 }
 
 /* A function for finding an index of an object in an array based on a value of its property */
@@ -91,26 +119,41 @@ function findIndexOfObjectWithProperty(array, prop, value) {
 	return -1;
 }
 
-/* A function for deleting a todo based on its date in milliseconds */
-async function deleteTodoByDateInMs(dateInMS) {
-	const indexOfTodoToDelete = findIndexOfObjectWithProperty(todoList, "date", dateInMS);
-	console.log(indexOfTodoToDelete);
-	if (indexOfTodoToDelete > -1) {
-		deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
-		await setPersistent(API_KEY, todoList);
+/* A function for deleting a todo based on its date in milliseconds, either from todoList of from completedTodos */
+async function deleteTodoByDateInMs(isCompleted, dateInMS) {
+	if (isCompleted) {
+		const indexOfTodoToDelete = findIndexOfObjectWithProperty(completedTodos, "date", dateInMS);
+		console.log(indexOfTodoToDelete);
+		if (indexOfTodoToDelete > -1) {
+			completedTodos.splice(indexOfTodoToDelete, 1);
+			await setPersistent(API_KEY, todoList, completedTodos);
+		}
+		console.log(deletedTodos);
+		console.log(todoList);
+	} else if (!isCompleted) {
+		const indexOfTodoToDelete = findIndexOfObjectWithProperty(todoList, "date", dateInMS);
+		console.log(indexOfTodoToDelete);
+		if (indexOfTodoToDelete > -1) {
+			deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
+			await setPersistent(API_KEY, todoList, completedTodos);
+		}
+		console.log(deletedTodos);
+		console.log(todoList);
 	}
-	console.log(deletedTodos);
-	console.log(todoList);
 }
 
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
-function displayTodo(todo = todoList[todoList.length - 1]) {
+function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 	console.log(todo);
 	console.log(todoList);
 
 	const todoContainer = document.createElement("div");
 	todoContainer.classList.add("todo-container");
-	viewSection.appendChild(todoContainer);
+	if (!isCompleted) {
+		viewSection.appendChild(todoContainer);
+	} else {
+		completedTodosSection.appendChild(todoContainer);
+	}
 
 	const todoPriority = document.createElement("div");
 	todoPriority.classList.add("todo-priority");
@@ -134,10 +177,12 @@ function displayTodo(todo = todoList[todoList.length - 1]) {
 	todoContainer.appendChild(deleteButton);
 	deleteButton.innerText = "Delete";
 
-	const completeTodoButton = document.createElement("button");
-	completeTodoButton.classList.add("complete-todo-button");
-	todoContainer.appendChild(completeTodoButton);
-	completeTodoButton.innerText = "✔";
+	if (!isCompleted) {
+		const completeTodoButton = document.createElement("button");
+		completeTodoButton.classList.add("complete-todo-button");
+		todoContainer.appendChild(completeTodoButton);
+		completeTodoButton.innerText = "✔";
+	}
 }
 
 /* A function for either incrementing or decrementing todoCount and displaying it in the counter heading */
@@ -146,6 +191,15 @@ function incrementAndDisplayTodoCount(add) {
 		counter.innerText = ++todoCount;
 	} else if (!add) {
 		counter.innerText = --todoCount;
+	}
+}
+
+/* A function for either incrementing or decrementing completedTodoCount and displaying it in the completed-todos-section */
+function incrementAndDisplayCompletedTodoCount(add) {
+	if (add) {
+		completedCounter.innerText = ++completedTodoCount;
+	} else if (!add) {
+		completedCounter.innerText = --completedTodoCount;
 	}
 }
 
@@ -190,6 +244,8 @@ function sortTodosAndRearrangeViewSection() {
 	}
 }
 
+function deleteToDoHandler(event) {}
+
 /* Event listener for the "Add Task" button */
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
@@ -202,7 +258,7 @@ todoForm.addEventListener("submit", (event) => {
 
 	pushTodo(todoText, todoPriority, todoCreatedAt);
 
-	displayTodo();
+	displayTodo(false);
 
 	incrementAndDisplayTodoCount(true);
 	todoForm.reset();
@@ -235,7 +291,7 @@ sortButton.addEventListener("click", () => {
 	sortTodosAndRearrangeViewSection();
 });
 
-/* Event listener for delete buttons (deleting todo's) */
+/* Event listener for delete buttons (deleting todo's) in view section*/
 viewSection.addEventListener("click", (event) => {
 	const closestDeleteButton = event.target.closest(".delete-button");
 	if (closestDeleteButton) {
@@ -246,9 +302,55 @@ viewSection.addEventListener("click", (event) => {
 			.dateMs;
 		console.log(dateOfCorrespondingTodoInMs);
 
-		deleteTodoByDateInMs(dateOfCorrespondingTodoInMs);
-
+		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
+		incrementAndDisplayTodoCount(false);
 		correspondingTodo.remove();
+	}
+});
+
+/* Event listener for delete buttons (deleting todo's) in comleted-todos-section*/
+completedTodosSection.addEventListener("click", (event) => {
+	const closestDeleteButton = event.target.closest(".delete-button");
+	if (closestDeleteButton) {
+		const correspondingTodo = closestDeleteButton.parentNode;
+		console.log(correspondingTodo);
+
+		const dateOfCorrespondingTodoInMs = correspondingTodo.querySelector(".todo-created-at").dataset
+			.dateMs;
+		console.log(dateOfCorrespondingTodoInMs);
+
+		deleteTodoByDateInMs(true, dateOfCorrespondingTodoInMs);
+		incrementAndDisplayCompletedTodoCount(false);
+		correspondingTodo.remove();
+	}
+});
+
+/* Event listener for complete-todo-buttons (completing todo's) */
+viewSection.addEventListener("click", (event) => {
+	const closestCompleteTodoButton = event.target.closest(".complete-todo-button");
+	if (closestCompleteTodoButton) {
+		const correspondingTodo = closestCompleteTodoButton.parentNode;
+		console.log(correspondingTodo);
+
+		const dateOfCorrespondingTodoInMs = +correspondingTodo.querySelector(".todo-created-at").dataset
+			.dateMs;
+		const textOfCorrespondingTodo = correspondingTodo.querySelector(".todo-text").innerText;
+		const priorityOfCorrespondingTodo = correspondingTodo.querySelector(".todo-priority").innerText;
+		console.log(textOfCorrespondingTodo);
+		console.log(priorityOfCorrespondingTodo);
+		console.log(dateOfCorrespondingTodoInMs);
+
+		pushTodoToCompleted(
+			textOfCorrespondingTodo,
+			priorityOfCorrespondingTodo,
+			dateOfCorrespondingTodoInMs
+		);
+		completedTodosSection.appendChild(correspondingTodo);
+		correspondingTodo.querySelector(".complete-todo-button").remove();
+
+		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
+		incrementAndDisplayTodoCount(false);
+		incrementAndDisplayCompletedTodoCount(true);
 	}
 });
 

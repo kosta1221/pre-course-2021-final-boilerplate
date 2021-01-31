@@ -21,7 +21,7 @@ async function getPersistent(key) {
 
 // Saves the given data into persistent storage by the given key.
 // Returns 'true' on success.
-async function setPersistent(key, data) {
+async function setPersistent(key, todoList, completedTodos) {
 	try {
 		let response = await fetch("https://api.jsonbin.io/v3/b/60130f82ef99c57c734b2f2f", {
 			method: "PUT",
@@ -29,7 +29,7 @@ async function setPersistent(key, data) {
 				"X-MASTER-KEY": key,
 				"Content-Type": "application/json;charset=utf-8",
 			},
-			body: JSON.stringify({ "my-todo": data }),
+			body: JSON.stringify({ "my-todo": todoList, "completed-todos": completedTodos }),
 		});
 
 		let result = await response.json();
