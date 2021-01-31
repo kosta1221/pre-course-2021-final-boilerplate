@@ -459,6 +459,13 @@ textInput.addEventListener("input", (event) => {
 	event.target.setCustomValidity("");
 });
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* The code below is for dragging & dropping exclusively. This was very hard to implement. I've followed these amazing guides:
+https://htmldom.dev/drag-and-drop-element-in-a-list/
+https://htmldom.dev/make-a-draggable-element/
+https://javascript.info/mouse-drag-and-drop */
+
 // The current dragging item
 let draggingElement;
 
@@ -466,26 +473,29 @@ let draggingElement;
 let x = 0;
 let y = 0;
 
+let placeholder;
+let isDraggingStarted = false;
+
+/* A handler function for mousedown events which is added to all elements with class draggable in displayTodo() */
 const mouseDownHandler = (event) => {
-	draggingElement = event.target;
+	draggingElement = event.target.closest(".draggable");
 
 	/* Calculate the mouse position INSIDE of the element and RELATIVE to it- this is super helpful for understanding getBoundingClientRect() - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect */
 	const elementRectangle = draggingElement.getBoundingClientRect();
 	x = event.pageX - elementRectangle.left;
 	y = event.pageY - elementRectangle.top;
 
+	// Setting display of all buttons of draggable element to none while being dragged
+	for (const button of draggingElement.querySelectorAll("button")) {
+		button.style.display = "none";
+	}
+
 	// Attach the listeners to `document`
 	document.addEventListener("mousemove", mouseMoveHandler);
 	document.addEventListener("mouseup", mouseUpHandler);
 };
 
-/* const mouseMoveHandler = (event) => {
-	// Set position for dragging element
-	draggingElement.style.position = "absolute";
-	draggingElement.style.top = `${event.pageY - y}px`;
-	draggingElement.style.left = `${event.pageX - x}px`;
-}; */
-
+/* A handler function for mouseup events for draggable elements */
 const mouseUpHandler = () => {
 	// Remove the placeholder
 	placeholder && placeholder.parentNode.removeChild(placeholder);
@@ -497,6 +507,11 @@ const mouseUpHandler = () => {
 	draggingElement.style.removeProperty("left");
 	draggingElement.style.removeProperty("position");
 
+	// Setting back buttons of draggable element to visible
+	for (const button of draggingElement.querySelectorAll("button")) {
+		button.style.display = "inline-block";
+	}
+
 	x = null;
 	y = null;
 	draggingElement = null;
@@ -506,9 +521,7 @@ const mouseUpHandler = () => {
 	document.removeEventListener("mouseup", mouseUpHandler);
 };
 
-let placeholder;
-let isDraggingStarted = false;
-
+/* A handler function for what happens when moving draggable elements */
 const mouseMoveHandler = (event) => {
 	const draggingElementRectangle = draggingElement.getBoundingClientRect();
 
@@ -530,4 +543,58 @@ const mouseMoveHandler = (event) => {
 	draggingElement.style.position = "absolute";
 	draggingElement.style.top = `${event.pageY - y}px`;
 	draggingElement.style.left = `${event.pageX - x}px`;
+
+	/* Next segment is for moving the element up/down the list(view/completed section) */
+
+	// The current order:
+	// previousElement
+	// draggingElement
+	// placeholder
+	// nextElement
+	const previousElement = draggingElement.previousElementSibling;
+	const nextElement = placeholder.nextElementmentSibling;
+
+	// User moves the dragging element to the top
+	if (previousElement && isAbove(draggingElement, previousElement)) {
+		// The current order    -> The new order
+		// previousElement      -> placeholder
+		// draggingElement      -> draggingElement
+		// placeholder          -> previousElement
+		swap(placeholder, draggingElement);
+		swap(placeholder, previousElement);
+		return;
+	}
+
+	// User moves the dragging element to the bottom
+	if (nextElement && isAbove(nextElement, draggingElement)) {
+		// The current order    -> The new order
+		// draggingElement      -> nextElement
+		// placeholder          -> placeholder
+		// nextElement              -> draggingElement
+		swap(nextElement, placeholder);
+		swap(nextElement, draggingElement);
+	}
+};
+
+/* A function for checking which node is above between 2 given nodes */
+const isAbove = function (nodeA, nodeB) {
+	// Get the bounding rectangle of nodes
+	const rectA = nodeA.getBoundingClientRect();
+	const rectB = nodeB.getBoundingClientRect();
+
+	return rectA.top + rectA.height / 2 < rectB.top + rectB.height / 2;
+};
+
+/* A function for swapping 2 nodes */
+const swap = function (nodeA, nodeB) {
+	const parentA = nodeA.parentNode;
+
+	// If nodeB is equal to nodeA's next sibling, siblingA will be nodeA. Otherwise siblingA will be nodeA's next sibling.
+	const siblingA = nodeA.nextSibling === nodeB ? nodeA : nodeA.nextSibling;
+
+	// Move `nodeA` to before the `nodeB`
+	nodeB.parentNode.insertBefore(nodeA, nodeB);
+
+	// Move `nodeB` to before the sibling of `nodeA`
+	parentA.insertBefore(nodeB, siblingA);
 };
