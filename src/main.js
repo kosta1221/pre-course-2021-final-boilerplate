@@ -489,6 +489,11 @@ const mouseDownHandler = (event) => {
 	for (const button of draggingElement.querySelectorAll("button")) {
 		button.style.display = "none";
 	}
+	// Disable transition effects while being dragged
+	draggingElement.style.transition = "none";
+
+	// keeping width normal while dragging
+	draggingElement.style.width = `${elementRectangle.width}px`;
 
 	// Attach the listeners to `document`
 	document.addEventListener("mousemove", mouseMoveHandler);
@@ -511,6 +516,8 @@ const mouseUpHandler = () => {
 	for (const button of draggingElement.querySelectorAll("button")) {
 		button.style.display = "inline-block";
 	}
+	// Enable transition effects
+	draggingElement.style.transition = "";
 
 	x = null;
 	y = null;

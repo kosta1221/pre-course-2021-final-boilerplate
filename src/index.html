@@ -48,28 +48,27 @@
 			</section>
 			<section class="view-section"></section>
 		</div>
-		<div class="wrapper-div">
-			<section class="completed-todos-section">
-				<div id="completed-todos-header-content">
-					<h3>Completed <span id="completed-counter"></span> Todos</h3>
-					<div id="sorting-label-and-selector-for-completed">
-						<label for="sorting-method-selector-for-completed">Sort By:</label>
-						<select name="sorting-method" id="sorting-method-selector-for-completed">
-							<option value="priority">priority</option>
-							<option value="date">date</option>
-						</select>
-						<button id="sorting-order-button-for-completed">
-							<img
-								id="sorting-image-for-completed"
-								class="logo"
-								src="/images/240px-Red_Arrow_Down.svg.png"
-								alt="arrow"
-							/>
-						</button>
-					</div>
-					<button id="sort-button-for-completed">Sort</button>
+		<div id="completed-todos-wrapper" class="wrapper-div">
+			<div id="completed-todos-header-content">
+				<h3>Completed <span id="completed-counter"></span> Todos</h3>
+				<div id="sorting-label-and-selector-for-completed">
+					<label for="sorting-method-selector-for-completed">Sort By:</label>
+					<select name="sorting-method" id="sorting-method-selector-for-completed">
+						<option value="priority">priority</option>
+						<option value="date">date</option>
+					</select>
+					<button id="sorting-order-button-for-completed">
+						<img
+							id="sorting-image-for-completed"
+							class="logo"
+							src="/images/240px-Red_Arrow_Down.svg.png"
+							alt="arrow"
+						/>
+					</button>
 				</div>
-			</section>
+				<button id="sort-button-for-completed">Sort</button>
+			</div>
+			<section class="completed-todos-section"></section>
 		</div>
 		<script src="./main.js"></script>
 	</body>

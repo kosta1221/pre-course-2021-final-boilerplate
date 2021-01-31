@@ -62,12 +62,6 @@ form > * {
 	padding-bottom: 3vmax;
 }
 
-.completed-todos-section {
-	margin: auto;
-	padding: 1vmax 0;
-	margin-top: 5vmax;
-}
-
 .todo-priority {
 	display: inline;
 	margin: 0 0.5rem;
@@ -128,13 +122,19 @@ form > * {
 
 /* For completed section */
 
+.completed-todos-section {
+	margin: auto;
+	padding: 1vmax 0;
+	margin-top: 1vmax;
+}
+
 #completed-todos-header-content > * {
 	display: inline;
 	margin: auto 1.1rem;
 }
 
 #completed-todos-header-content {
-	margin-bottom: 3vmax;
+	margin-bottom: 2vmax;
 }
 
 #sorting-label-and-selector-for-completed > * {
@@ -144,4 +144,8 @@ form > * {
 #sorting-order-button-for-completed {
 	padding: 0;
 	margin: 0;
+}
+
+#completed-todos-wrapper {
+	margin-top: 4vmax;
 }
