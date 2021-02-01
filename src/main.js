@@ -518,6 +518,7 @@ const mouseDownHandler = (event) => {
 			event.target.parentNode === viewSection ||
 			event.target.parentNode.parentNode === viewSection
 		) {
+			completedTodosSection.style.position = "relative";
 			moveTodosHere.style.display = "flex";
 			completedTodosSection.style.minHeight = "200px";
 		}
@@ -579,6 +580,7 @@ const mouseUpHandler = (event) => {
 	// If move-todos-here is showing, and there are completed todos, stop showing it on mouseup
 	console.log(moveTodosHere.style.display === "flex" && completedTodos.length > 0);
 	if (moveTodosHere.style.display === "flex" && completedTodos.length > 0) {
+		completedTodosSection.style.position = "static";
 		moveTodosHere.style.display = "none";
 		completedTodosSection.style.minHeight = "";
 	}

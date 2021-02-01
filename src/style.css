@@ -21,14 +21,23 @@ header > * {
 
 button {
 	padding: 0 0.5rem;
+	/* color: #fff !important;
+	background-color: #341d5b !important;
+	cursor: pointer; */
 }
+
+/* .todo-container button {
+	color: #fff !important;
+	background-color: #341d5b !important;
+	cursor: pointer;
+	display: none;
+} */
 
 form > * {
 	margin: 0 0.5rem;
 }
 
 #loader {
-	/* 	display: none; */
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -148,7 +157,7 @@ form > * {
 
 .completed-todos-section {
 	margin: auto;
-	position: relative;
+	position: static;
 	padding: 1vmax 0;
 	margin-top: 1vmax;
 }
