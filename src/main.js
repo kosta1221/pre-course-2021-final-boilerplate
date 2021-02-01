@@ -6,10 +6,12 @@ const textInput = document.querySelector("#text-input");
 const todoForm = document.querySelector("#todo-form");
 const prioritySelector = document.querySelector("#priority-selector");
 const counter = document.querySelector("#counter");
+const loader = document.querySelector("#loader");
 const sortButton = document.querySelector("#sort-button");
 const sortingMethodSelector = document.querySelector("#sorting-method-selector");
 const sortingOrderButton = document.querySelector("#sorting-order-button");
 const sortingImage = document.querySelector("#sorting-image");
+const allElementsInBodyExceptLoader = document.querySelectorAll("body :not(#loader)");
 
 /* DOM Elements for completed todo's */
 const completedTodosSection = document.querySelector(".completed-todos-section");
@@ -618,8 +620,6 @@ const mouseMoveHandler = (event) => {
 		swap(nextElement, draggingElement);
 	}
 };
-
-console.log(completedTodosSection.getBoundingClientRect());
 
 /* A function for checking if one node is above the other or not */
 const isAbove = function (nodeA, nodeB) {
