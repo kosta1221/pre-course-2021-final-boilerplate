@@ -12,6 +12,7 @@ const sortingMethodSelector = document.querySelector("#sorting-method-selector")
 const sortingOrderButton = document.querySelector("#sorting-order-button");
 const sortingImage = document.querySelector("#sorting-image");
 const allElementsInBodyExceptLoader = document.querySelectorAll("body :not(#loader)");
+const moveTodosHere = document.querySelector("#move-todos-here");
 
 /* DOM Elements for completed todo's */
 const completedTodosSection = document.querySelector(".completed-todos-section");
@@ -502,11 +503,24 @@ const mouseDownHandler = (event) => {
 		for (const button of draggingElement.querySelectorAll("button")) {
 			button.style.display = "none";
 		}
-		// Disable transition effects while being dragged
+		// Disable transition effects while being dragged and make it above everything else
 		draggingElement.style.transition = "none";
+		draggingElement.style.zIndex = "2";
 
 		// keeping width normal while dragging
 		draggingElement.style.width = `${elementRectangle.width}px`;
+
+		// Show the move-todos-here
+		console.log(
+			event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection
+		);
+		if (
+			event.target.parentNode === viewSection ||
+			event.target.parentNode.parentNode === viewSection
+		) {
+			moveTodosHere.style.display = "flex";
+			completedTodosSection.style.minHeight = "200px";
+		}
 
 		// Attach the listeners to `document`
 		document.addEventListener("mousemove", mouseMoveHandler);
@@ -530,8 +544,9 @@ const mouseUpHandler = (event) => {
 	for (const button of draggingElement.querySelectorAll("button")) {
 		button.style.display = "inline-block";
 	}
-	// Enable transition effects
+	// Enable transition effects, set z-index back to normal
 	draggingElement.style.transition = "";
+	draggingElement.style.zIndex = "0";
 
 	// Setting width back to 100% once it's within the proper structure again to maintain responsiveness
 	draggingElement.style.width = "100%";
@@ -548,15 +563,24 @@ const mouseUpHandler = (event) => {
 		event.pageX < completedTodosRectangle.right &&
 		event.pageY < completedTodosRectangle.bottom &&
 		event.pageY > completedTodosRectangle.top &&
-		event.target.parentNode === viewSection
+		(event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection)
 	) {
 		console.log(event.pageX);
 		console.log(event.pageY);
 		console.log("SYKE");
 
-		console.log(event.target.parentNode === viewSection);
+		console.log(
+			event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection
+		);
 		console.log(event.target);
 		addTodoToCompletedHandler(event);
+	}
+
+	// If move-todos-here is showing, and there are completed todos, stop showing it on mouseup
+	console.log(moveTodosHere.style.display === "flex" && completedTodos.length > 0);
+	if (moveTodosHere.style.display === "flex" && completedTodos.length > 0) {
+		moveTodosHere.style.display = "none";
+		completedTodosSection.style.minHeight = "";
 	}
 
 	// Remove the handlers of `mousemove` and `mouseup`
@@ -618,6 +642,22 @@ const mouseMoveHandler = (event) => {
 
 		swap(nextElement, placeholder);
 		swap(nextElement, draggingElement);
+	}
+
+	// This is purely a workaround to mimic my hover effect, because while dragging an item you cannot hover on something else! Sadly I couldn't find how to add transition on non-hover effects.
+	const completedTodosRectangle = completedTodosSection.getBoundingClientRect();
+	if (
+		event.pageX > completedTodosRectangle.left &&
+		event.pageX < completedTodosRectangle.right &&
+		event.pageY < completedTodosRectangle.bottom &&
+		event.pageY > completedTodosRectangle.top &&
+		(event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection)
+	) {
+		moveTodosHere.style.color = "indigo";
+		moveTodosHere.style.fontSize = "larger";
+	} else {
+		moveTodosHere.style.color = "white";
+		moveTodosHere.style.fontSize = "medium";
 	}
 };
 

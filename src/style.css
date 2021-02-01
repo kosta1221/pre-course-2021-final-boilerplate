@@ -28,7 +28,7 @@ form > * {
 }
 
 #loader {
-	display: none;
+	/* 	display: none; */
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -68,7 +68,7 @@ form > * {
 .wrapper-div {
 	width: 80vw;
 	margin: 2vh auto;
-	padding: 0 1vmax;
+	padding: 0 1%;
 	background-color: whitesmoke;
 	box-shadow: 0px 0px 15px background;
 	border-radius: 25px;
@@ -148,6 +148,7 @@ form > * {
 
 .completed-todos-section {
 	margin: auto;
+	position: relative;
 	padding: 1vmax 0;
 	margin-top: 1vmax;
 }
@@ -173,3 +174,42 @@ form > * {
 #completed-todos-wrapper {
 	margin-top: 4vmax;
 }
+
+#check-mark {
+	font-size: 7rem;
+}
+
+#move-todos-here {
+	position: absolute;
+	border-radius: 25px;
+	border: 5px ridge indigo;
+	top: 0;
+	left: 0;
+	width: 102%;
+	height: 100%;
+	min-height: 200px;
+	margin: 0 -1%;
+	z-index: 1;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(130deg, #503bff 0%, #8293ff 100%);
+	color: white;
+}
+
+#move-todos-here:hover {
+	color: indigo;
+	font-size: larger;
+}
+
+/* Medium screens */
+@media all and (max-width: 800px) {
+	.wrapper-div {
+		padding: 0 1vmax;
+	}
+}
+/* Small screens */
+/* @media all and (max-width: 630px) {
+	
+} */
