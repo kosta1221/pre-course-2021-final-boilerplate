@@ -83,6 +83,10 @@ form > * {
 	}
 }
 
+#todo-created-at-short-version {
+	display: none;
+}
+
 #secondary-header-content > * {
 	display: inline;
 	margin: auto 1.1rem;
@@ -164,8 +168,9 @@ input[type="text"]:focus {
 }
 
 .todo-text {
-	display: inline;
+	display: inline-block;
 	margin: 0 0.5rem;
+	max-width: 40vw;
 }
 
 .delete-button {
@@ -213,6 +218,10 @@ input[type="text"]:focus {
 	margin: 0.2rem 0;
 	box-shadow: 0px 0px 15px background;
 	border-radius: 7px;
+}
+
+.todo-container * {
+	vertical-align: middle;
 }
 
 .view-section > :hover {
@@ -326,7 +335,7 @@ input[type="text"]:focus {
 }
 
 /* Medium screens */
-@media all and (max-width: 830px) {
+@media all and (max-width: 865px) {
 	.wrapper-div {
 		padding: 0 1vmax;
 	}
@@ -340,8 +349,82 @@ input[type="text"]:focus {
 		text-shadow: 2px 2px 5px #503bff;
 		font-size: 1.5em;
 	}
+
+	#todo-created-at-short-version {
+		display: inline-block;
+	}
+
+	#todo-created-at-long-version {
+		display: none;
+	}
+
+	.todo-text {
+		max-width: 36vw;
+	}
 }
+
 /* Small screens */
-/* @media all and (max-width: 630px) {
-	
-} */
+@media all and (max-width: 630px) {
+	.todo-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.delete-button {
+		display: block;
+		margin-right: 0;
+	}
+
+	.complete-todo-button {
+		display: block;
+		margin-right: 0;
+	}
+
+	#todo-form {
+		display: flex;
+		margin-left: -1vw;
+	}
+
+	#text-input {
+		margin-left: 0;
+	}
+
+	#secondary-header-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	#secondary-header-content > * {
+		margin-top: 1vmin;
+		margin-bottom: 1vmin;
+	}
+
+	#sorting-label-and-selector {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+/* Super Small screens */
+@media all and (max-width: 430px) {
+	#todo-form {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	#todo-form > * {
+		margin-top: 0.5vmin;
+		margin-bottom: 0.5vmin;
+	}
+
+	.control-section {
+		padding-top: 0;
+	}
+
+	#text-input {
+		margin-right: 0;
+	}
+}

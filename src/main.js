@@ -95,7 +95,7 @@ function twoDigits(number) {
 	return number.toString();
 }
 
-/* A function for converting date objects to my mySQL format strings (local time) */
+/* A function for converting date in MS to my mySQL format strings (local time) */
 function toMySqlFormat(dateInMS) {
 	const dateObject = new Date(dateInMS);
 
@@ -111,6 +111,21 @@ function toMySqlFormat(dateInMS) {
 		twoDigits(dateObject.getMinutes()) +
 		":" +
 		twoDigits(dateObject.getSeconds())
+	);
+}
+
+/* A function for converting date in MS to my mySQL format strings (local time) */
+function toMyDateForSmallerScreens(dateInMS) {
+	const dateObject = new Date(dateInMS);
+
+	return (
+		twoDigits(1 + dateObject.getMonth()) +
+		"/" +
+		twoDigits(dateObject.getDate()) +
+		" " +
+		twoDigits(dateObject.getHours()) +
+		":" +
+		twoDigits(dateObject.getMinutes())
 	);
 }
 
@@ -183,6 +198,7 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 
 	const todoCreatedAt = document.createElement("div");
 	todoCreatedAt.classList.add("todo-created-at");
+	todoCreatedAt.setAttribute("id", "todo-created-at-long-version");
 	todoCreatedAt.setAttribute("data-date-ms", todo.date);
 	console.log(
 		"The following number is todo-created-at's data-date-ms which should be equal to todo's date in ms:"
@@ -190,6 +206,13 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 	console.log(todoCreatedAt.dataset.dateMs); // Attributes are converted to camelCase
 	todoContainer.appendChild(todoCreatedAt);
 	todoCreatedAt.innerText = toMySqlFormat(todo.date);
+	/* Create shorter version of date for use in media queries */
+	const todoCreatedAtShortVersion = document.createElement("div");
+	todoCreatedAtShortVersion.classList.add("todo-created-at");
+	todoCreatedAtShortVersion.setAttribute("id", "todo-created-at-short-version");
+	todoCreatedAtShortVersion.setAttribute("data-date-ms", todo.date);
+	todoContainer.appendChild(todoCreatedAtShortVersion);
+	todoCreatedAtShortVersion.innerText = toMyDateForSmallerScreens(todo.date);
 
 	const todoText = document.createElement("div");
 	todoText.classList.add("todo-text");
