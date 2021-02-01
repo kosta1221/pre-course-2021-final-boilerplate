@@ -307,6 +307,42 @@ function sortTodosAndRearrangeViewSection(isCompleted) {
 	}
 }
 
+/* A handler function for adding a todo to completedTodos */
+function addTodoToCompletedHandler(event) {
+	let closestCompleteTodoButton;
+
+	if (event.type === "click") {
+		closestCompleteTodoButton = event.target.closest(".complete-todo-button");
+	} else if (event.type === "mouseup") {
+		closestCompleteTodoButton = event.target.querySelector(".complete-todo-button");
+	}
+
+	if (closestCompleteTodoButton) {
+		const correspondingTodo = closestCompleteTodoButton.parentNode;
+		console.log(correspondingTodo);
+
+		const dateOfCorrespondingTodoInMs = +correspondingTodo.querySelector(".todo-created-at").dataset
+			.dateMs;
+		const textOfCorrespondingTodo = correspondingTodo.querySelector(".todo-text").innerText;
+		const priorityOfCorrespondingTodo = correspondingTodo.querySelector(".todo-priority").innerText;
+		console.log(textOfCorrespondingTodo);
+		console.log(priorityOfCorrespondingTodo);
+		console.log(dateOfCorrespondingTodoInMs);
+
+		pushTodoToCompleted(
+			textOfCorrespondingTodo,
+			priorityOfCorrespondingTodo,
+			dateOfCorrespondingTodoInMs
+		);
+		completedTodosSection.appendChild(correspondingTodo);
+		correspondingTodo.querySelector(".complete-todo-button").remove();
+
+		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
+		incrementAndDisplayTodoCount(false);
+		incrementAndDisplayCompletedTodoCount(true);
+	}
+}
+
 /* Event listener for the "Add Task" button */
 todoForm.addEventListener("submit", (event) => {
 	event.preventDefault();
@@ -419,33 +455,7 @@ completedTodosSection.addEventListener("click", (event) => {
 });
 
 /* Event listener for complete-todo-buttons (completing todo's) */
-viewSection.addEventListener("click", (event) => {
-	const closestCompleteTodoButton = event.target.closest(".complete-todo-button");
-	if (closestCompleteTodoButton) {
-		const correspondingTodo = closestCompleteTodoButton.parentNode;
-		console.log(correspondingTodo);
-
-		const dateOfCorrespondingTodoInMs = +correspondingTodo.querySelector(".todo-created-at").dataset
-			.dateMs;
-		const textOfCorrespondingTodo = correspondingTodo.querySelector(".todo-text").innerText;
-		const priorityOfCorrespondingTodo = correspondingTodo.querySelector(".todo-priority").innerText;
-		console.log(textOfCorrespondingTodo);
-		console.log(priorityOfCorrespondingTodo);
-		console.log(dateOfCorrespondingTodoInMs);
-
-		pushTodoToCompleted(
-			textOfCorrespondingTodo,
-			priorityOfCorrespondingTodo,
-			dateOfCorrespondingTodoInMs
-		);
-		completedTodosSection.appendChild(correspondingTodo);
-		correspondingTodo.querySelector(".complete-todo-button").remove();
-
-		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
-		incrementAndDisplayTodoCount(false);
-		incrementAndDisplayCompletedTodoCount(true);
-	}
-});
+viewSection.addEventListener("click", addTodoToCompletedHandler);
 
 /* These 2 listeners below are used for custom validation message for my input. Inspiration from - https://stackoverflow.com/questions/5272433/html5-form-required-attribute-set-custom-validation-message */
 textInput.addEventListener("invalid", (event) => {
@@ -478,30 +488,32 @@ let isDraggingStarted = false;
 
 /* A handler function for mousedown events which is added to all elements with class draggable in displayTodo() */
 const mouseDownHandler = (event) => {
-	draggingElement = event.target.closest(".draggable");
+	if (event.target.tagName != "BUTTON") {
+		draggingElement = event.target.closest(".draggable");
 
-	/* Calculate the mouse position INSIDE of the element and RELATIVE to it- this is super helpful for understanding getBoundingClientRect() - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect */
-	const elementRectangle = draggingElement.getBoundingClientRect();
-	x = event.pageX - elementRectangle.left;
-	y = event.pageY - elementRectangle.top;
+		/* Calculate the mouse position INSIDE of the element and RELATIVE to it- this is super helpful for understanding getBoundingClientRect() - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect */
+		const elementRectangle = draggingElement.getBoundingClientRect();
+		x = event.pageX - elementRectangle.left;
+		y = event.pageY - elementRectangle.top;
 
-	// Setting display of all buttons of draggable element to none while being dragged
-	for (const button of draggingElement.querySelectorAll("button")) {
-		button.style.display = "none";
+		// Setting display of all buttons of draggable element to none while being dragged
+		for (const button of draggingElement.querySelectorAll("button")) {
+			button.style.display = "none";
+		}
+		// Disable transition effects while being dragged
+		draggingElement.style.transition = "none";
+
+		// keeping width normal while dragging
+		draggingElement.style.width = `${elementRectangle.width}px`;
+
+		// Attach the listeners to `document`
+		document.addEventListener("mousemove", mouseMoveHandler);
+		document.addEventListener("mouseup", mouseUpHandler);
 	}
-	// Disable transition effects while being dragged
-	draggingElement.style.transition = "none";
-
-	// keeping width normal while dragging
-	draggingElement.style.width = `${elementRectangle.width}px`;
-
-	// Attach the listeners to `document`
-	document.addEventListener("mousemove", mouseMoveHandler);
-	document.addEventListener("mouseup", mouseUpHandler);
 };
 
 /* A handler function for mouseup events for draggable elements */
-const mouseUpHandler = () => {
+const mouseUpHandler = (event) => {
 	// Remove the placeholder
 	placeholder && placeholder.parentNode.removeChild(placeholder);
 	// Reset the flag
@@ -519,9 +531,31 @@ const mouseUpHandler = () => {
 	// Enable transition effects
 	draggingElement.style.transition = "";
 
+	// Setting width back to 100% once it's within the proper structure again to maintain responsiveness
+	draggingElement.style.width = "100%";
+
 	x = null;
 	y = null;
 	draggingElement = null;
+
+	/* If dragged to completed todo's, add to completed todo's on mouseup. */
+	const completedTodosRectangle = completedTodosSection.getBoundingClientRect();
+
+	if (
+		event.pageX > completedTodosRectangle.left &&
+		event.pageX < completedTodosRectangle.right &&
+		event.pageY < completedTodosRectangle.bottom &&
+		event.pageY > completedTodosRectangle.top &&
+		event.target.parentNode === viewSection
+	) {
+		console.log(event.pageX);
+		console.log(event.pageY);
+		console.log("SYKE");
+
+		console.log(event.target.parentNode === viewSection);
+		console.log(event.target);
+		addTodoToCompletedHandler(event);
+	}
 
 	// Remove the handlers of `mousemove` and `mouseup`
 	document.removeEventListener("mousemove", mouseMoveHandler);
@@ -584,6 +618,8 @@ const mouseMoveHandler = (event) => {
 		swap(nextElement, draggingElement);
 	}
 };
+
+console.log(completedTodosSection.getBoundingClientRect());
 
 /* A function for checking if one node is above the other or not */
 const isAbove = function (nodeA, nodeB) {
