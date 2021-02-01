@@ -25,6 +25,7 @@ const sortingOrderButtonForCompleted = document.querySelector(
 	"#sorting-order-button-for-completed"
 );
 const sortingImageForCompleted = document.querySelector("#sorting-image-for-completed");
+const completedTodosHeaderContent = document.querySelector("#completed-todos-header-content");
 
 const RED_ARROW_DOWN_SRC = "/images/240px-Red_Arrow_Down.svg.png";
 const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
@@ -519,6 +520,7 @@ const mouseDownHandler = (event) => {
 			event.target.parentNode.parentNode === viewSection
 		) {
 			completedTodosSection.style.position = "relative";
+			completedTodosHeaderContent.style.display = "none";
 			moveTodosHere.style.display = "flex";
 			completedTodosSection.style.minHeight = "200px";
 		}
@@ -541,10 +543,12 @@ const mouseUpHandler = (event) => {
 	draggingElement.style.removeProperty("left");
 	draggingElement.style.removeProperty("position");
 
+	// UNCOMMENT IF YOU WANT VISIBLE BUTTONS FOR todo-containers
 	// Setting back buttons of draggable element to visible
 	for (const button of draggingElement.querySelectorAll("button")) {
 		button.style.display = "inline-block";
 	}
+
 	// Enable transition effects, set z-index back to normal
 	draggingElement.style.transition = "";
 	draggingElement.style.zIndex = "0";
@@ -580,6 +584,7 @@ const mouseUpHandler = (event) => {
 	// If move-todos-here is showing, and there are completed todos, stop showing it on mouseup
 	console.log(moveTodosHere.style.display === "flex" && completedTodos.length > 0);
 	if (moveTodosHere.style.display === "flex" && completedTodos.length > 0) {
+		completedTodosHeaderContent.style.display = "block";
 		completedTodosSection.style.position = "static";
 		moveTodosHere.style.display = "none";
 		completedTodosSection.style.minHeight = "";
