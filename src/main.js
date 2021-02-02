@@ -158,7 +158,7 @@ async function deleteTodoByDateInMs(isCompleted, dateInMS) {
 			await setPersistent(API_KEY, todoList, completedTodos);
 		}
 		// If it's the last completed todo and it's deleted, show 'move-todos-here'
-		if (completedTodos.length <= 1) {
+		if (completedTodos.length < 1) {
 			completedTodosSection.style.position = "relative";
 			completedTodosHeaderContent.style.display = "none";
 			moveTodosHere.style.display = "flex";
@@ -452,8 +452,8 @@ const mouseDownHandler = (event) => {
 
 		/* Calculate the mouse position INSIDE of the element and RELATIVE to it- this is super helpful for understanding getBoundingClientRect() - https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect */
 		const elementRectangle = draggingElement.getBoundingClientRect();
-		x = event.pageX - elementRectangle.left;
-		y = event.pageY - elementRectangle.top;
+		x = event.pageX - elementRectangle.left - window.scrollX;
+		y = event.pageY - elementRectangle.top - window.scrollY;
 
 		// Setting display of all buttons of draggable element to none while being dragged
 		for (const button of draggingElement.querySelectorAll("button")) {
@@ -515,10 +515,10 @@ const mouseUpHandler = (event) => {
 	/* If dragged to completed todo's, add to completed todo's on mouseup. */
 	const completedTodosRectangle = completedTodosSection.getBoundingClientRect();
 	if (
-		event.pageX > completedTodosRectangle.left &&
-		event.pageX < completedTodosRectangle.right &&
-		event.pageY < completedTodosRectangle.bottom &&
-		event.pageY > completedTodosRectangle.top &&
+		event.pageX > completedTodosRectangle.left + scrollX &&
+		event.pageX < completedTodosRectangle.right + scrollX &&
+		event.pageY < completedTodosRectangle.bottom + scrollY &&
+		event.pageY > completedTodosRectangle.top + scrollY &&
 		(event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection)
 	) {
 		addTodoToCompletedHandler(event);
@@ -597,10 +597,10 @@ const mouseMoveHandler = (event) => {
 	// This is purely a workaround to mimic my hover effect, because while dragging an item you cannot hover on something else! Sadly I couldn't find how to add transition on non-hover effects.
 	const completedTodosRectangle = completedTodosSection.getBoundingClientRect();
 	if (
-		event.pageX > completedTodosRectangle.left &&
-		event.pageX < completedTodosRectangle.right &&
-		event.pageY < completedTodosRectangle.bottom &&
-		event.pageY > completedTodosRectangle.top &&
+		event.pageX > completedTodosRectangle.left + scrollX &&
+		event.pageX < completedTodosRectangle.right + scrollX &&
+		event.pageY < completedTodosRectangle.bottom + scrollY &&
+		event.pageY > completedTodosRectangle.top + scrollY &&
 		(event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection)
 	) {
 		moveTodosHere.style.color = "indigo";
