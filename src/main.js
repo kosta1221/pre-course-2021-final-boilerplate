@@ -41,8 +41,6 @@ let sortingOrderForCompleted = true; // true for descending, false for ascending
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
 	const loadedData = await getPersistent(API_KEY);
-	console.log("Promise received (loaded data): ");
-	console.log(loadedData);
 
 	if (Array.isArray(loadedData.record["my-todo"])) {
 		todoList = loadedData.record["my-todo"];
@@ -55,22 +53,14 @@ async function loadDataFromApi() {
 	} else if (loadedData.record["completed-todos"]) {
 		completedTodos.push(loadedData.record["completed-todos"]);
 	}
-	console.log("todoList: ");
-	console.log(todoList);
-	console.log("completedTodos: ");
-	console.log(completedTodos);
-	console.log("todoCount: " + todoCount);
-	console.log("completedTodoCount: " + todoCount);
 
 	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
-	/* todoList = todoList.sort(sortingSpecifier(true, "priority"));
-	console.log(todoList); */
+	/* todoList = todoList.sort(sortingSpecifier(true, "priority")); */
 
 	if (todoList.length > 0) {
 		for (todo of todoList) {
 			displayTodo(false, todo);
 			incrementAndDisplayTodoCount(true);
-			console.log("todoCount: " + todoCount);
 		}
 	}
 
@@ -78,8 +68,12 @@ async function loadDataFromApi() {
 		for (completedTodo of completedTodos) {
 			displayTodo(true, completedTodo);
 			incrementAndDisplayCompletedTodoCount(true);
-			console.log("completedTodoCount: " + completedTodoCount);
 		}
+	} else {
+		completedTodosSection.style.position = "relative";
+		completedTodosHeaderContent.style.display = "none";
+		moveTodosHere.style.display = "flex";
+		completedTodosSection.style.minHeight = "200px";
 	}
 }
 
@@ -158,30 +152,31 @@ function findIndexOfObjectWithProperty(array, prop, value) {
 async function deleteTodoByDateInMs(isCompleted, dateInMS) {
 	if (isCompleted) {
 		const indexOfTodoToDelete = findIndexOfObjectWithProperty(completedTodos, "date", dateInMS);
-		console.log(indexOfTodoToDelete);
+
 		if (indexOfTodoToDelete > -1) {
 			completedTodos.splice(indexOfTodoToDelete, 1);
 			await setPersistent(API_KEY, todoList, completedTodos);
 		}
-		console.log(deletedTodos);
-		console.log(todoList);
+		// If it's the last completed todo and it's deleted, show 'move-todos-here'
+		if (completedTodos.length <= 1) {
+			completedTodosSection.style.position = "relative";
+			completedTodosHeaderContent.style.display = "none";
+			moveTodosHere.style.display = "flex";
+			moveTodosHere.style.color = "white";
+			completedTodosSection.style.minHeight = "200px";
+		}
 	} else if (!isCompleted) {
 		const indexOfTodoToDelete = findIndexOfObjectWithProperty(todoList, "date", dateInMS);
-		console.log(indexOfTodoToDelete);
+
 		if (indexOfTodoToDelete > -1) {
 			deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
 			await setPersistent(API_KEY, todoList, completedTodos);
 		}
-		console.log(deletedTodos);
-		console.log(todoList);
 	}
 }
 
 /* A function for displaying todo's on the page. Default value is set to todolists' last todo. This is for calling the function without specifying a parameter. Otherwise the displayed todo will be the parameter with which the function was called. */
 function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
-	console.log("Todo to be displayed: ");
-	console.log(todo);
-
 	const todoContainer = document.createElement("div");
 	todoContainer.classList.add("todo-container");
 	todoContainer.classList.add("draggable");
@@ -200,10 +195,7 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 	todoCreatedAt.classList.add("todo-created-at");
 	todoCreatedAt.setAttribute("id", "todo-created-at-long-version");
 	todoCreatedAt.setAttribute("data-date-ms", todo.date);
-	console.log(
-		"The following number is todo-created-at's data-date-ms which should be equal to todo's date in ms:"
-	);
-	console.log(todoCreatedAt.dataset.dateMs); // Attributes are converted to camelCase
+
 	todoContainer.appendChild(todoCreatedAt);
 	todoCreatedAt.innerText = toMySqlFormat(todo.date);
 
@@ -271,29 +263,14 @@ function sortingSpecifier(largestToSmallest, property) {
 function sortTodosAndRearrangeViewSection(isCompleted) {
 	if (!isCompleted) {
 		todoList = todoList.sort(sortingSpecifier(sortingOrder, sortingMethodSelector.value));
-		console.log(todoList);
 
 		let todoListIterator = 0;
 
-		console.log(viewSection.getElementsByClassName("todo-container"));
-
 		for (const todoContainer of viewSection.getElementsByClassName("todo-container")) {
-			console.log(todoContainer);
-
 			todoContainer.children[0].innerText = todoList[todoListIterator].priority;
-			console.log(
-				todoListIterator + "'s Original date in ms: " + todoContainer.children[1].dataset.dateMs
-			);
-
 			todoContainer.children[1].dataset.dateMs = todoList[todoListIterator].date;
-
-			console.log(
-				todoListIterator + "'s date in ms after sort: " + todoContainer.children[1].dataset.dateMs
-			);
-
 			todoContainer.children[1].innerText = toMySqlFormat(todoList[todoListIterator].date);
 			todoContainer.children[2].innerText = todoList[todoListIterator].text;
-
 			todoListIterator++;
 		}
 	} else if (isCompleted) {
@@ -301,29 +278,13 @@ function sortTodosAndRearrangeViewSection(isCompleted) {
 		completedTodos = completedTodos.sort(
 			sortingSpecifier(sortingOrderForCompleted, sortingMethodSelectorForCompleted.value)
 		);
-		console.log(completedTodos);
 
 		let completedTodosIterator = 0;
 
-		console.log(completedTodosSection.getElementsByClassName("todo-container"));
-
 		for (const todoContainer of completedTodosSection.getElementsByClassName("todo-container")) {
-			console.log(todoContainer);
-
 			todoContainer.children[0].innerText = completedTodos[completedTodosIterator].priority;
-			console.log(
-				completedTodosIterator +
-					"'s Original date in ms: " +
-					todoContainer.children[1].dataset.dateMs
-			);
 
 			todoContainer.children[1].dataset.dateMs = completedTodos[completedTodosIterator].date;
-
-			console.log(
-				completedTodosIterator +
-					"'s date in ms after sort: " +
-					todoContainer.children[1].dataset.dateMs
-			);
 
 			todoContainer.children[1].innerText = toMySqlFormat(
 				completedTodos[completedTodosIterator].date
@@ -347,15 +308,11 @@ function addTodoToCompletedHandler(event) {
 
 	if (closestCompleteTodoButton) {
 		const correspondingTodo = closestCompleteTodoButton.parentNode;
-		console.log(correspondingTodo);
 
 		const dateOfCorrespondingTodoInMs = +correspondingTodo.querySelector(".todo-created-at").dataset
 			.dateMs;
 		const textOfCorrespondingTodo = correspondingTodo.querySelector(".todo-text").innerText;
 		const priorityOfCorrespondingTodo = correspondingTodo.querySelector(".todo-priority").innerText;
-		console.log(textOfCorrespondingTodo);
-		console.log(priorityOfCorrespondingTodo);
-		console.log(dateOfCorrespondingTodoInMs);
 
 		pushTodoToCompleted(
 			textOfCorrespondingTodo,
@@ -391,55 +348,34 @@ todoForm.addEventListener("submit", (event) => {
 
 /* Event listener for sorting-order-button */
 sortingOrderButton.addEventListener("click", (event) => {
-	console.log(sortingImage);
 	if (sortingImage.src.includes(RED_ARROW_DOWN_SRC)) {
-		console.log(sortingImage.src);
-
 		sortingImage.src = sortingImage.src.replace(RED_ARROW_DOWN_SRC, GREEN_ARROW_UP_SRC);
 		sortingOrder = false;
-
-		console.log(sortingImage.src);
 	} else if (sortingImage.src.includes(GREEN_ARROW_UP_SRC)) {
-		console.log(sortingImage.src);
-
 		sortingImage.src = sortingImage.src.replace(GREEN_ARROW_UP_SRC, RED_ARROW_DOWN_SRC);
 		sortingOrder = true;
-
-		console.log(sortingImage.src);
 	}
-	console.log("sorting order:" + sortingOrder);
 });
 
 /* Event listener for sorting-order-button-for-completed */
 sortingOrderButtonForCompleted.addEventListener("click", (event) => {
-	console.log(sortingImageForCompleted);
 	if (sortingImageForCompleted.src.includes(RED_ARROW_DOWN_SRC)) {
-		console.log(sortingImageForCompleted.src);
-
 		sortingImageForCompleted.src = sortingImageForCompleted.src.replace(
 			RED_ARROW_DOWN_SRC,
 			GREEN_ARROW_UP_SRC
 		);
 		sortingOrderForCompleted = false;
-
-		console.log(sortingImageForCompleted.src);
 	} else if (sortingImageForCompleted.src.includes(GREEN_ARROW_UP_SRC)) {
-		console.log(sortingImageForCompleted.src);
-
 		sortingImageForCompleted.src = sortingImageForCompleted.src.replace(
 			GREEN_ARROW_UP_SRC,
 			RED_ARROW_DOWN_SRC
 		);
 		sortingOrderForCompleted = true;
-
-		console.log(sortingImageForCompleted.src);
 	}
-	console.log("sorting order:" + sortingOrderForCompleted);
 });
 
 /* Event listener for sort button (sorting todo's) */
 sortButton.addEventListener("click", () => {
-	console.log(JSON.stringify(todoList));
 	sortTodosAndRearrangeViewSection(false);
 });
 
@@ -453,11 +389,9 @@ viewSection.addEventListener("click", (event) => {
 	const closestDeleteButton = event.target.closest(".delete-button");
 	if (closestDeleteButton) {
 		const correspondingTodo = closestDeleteButton.parentNode;
-		console.log(correspondingTodo);
 
 		const dateOfCorrespondingTodoInMs = correspondingTodo.querySelector(".todo-created-at").dataset
 			.dateMs;
-		console.log(dateOfCorrespondingTodoInMs);
 
 		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
 		incrementAndDisplayTodoCount(false);
@@ -470,11 +404,9 @@ completedTodosSection.addEventListener("click", (event) => {
 	const closestDeleteButton = event.target.closest(".delete-button");
 	if (closestDeleteButton) {
 		const correspondingTodo = closestDeleteButton.parentNode;
-		console.log(correspondingTodo);
 
 		const dateOfCorrespondingTodoInMs = correspondingTodo.querySelector(".todo-created-at").dataset
 			.dateMs;
-		console.log(dateOfCorrespondingTodoInMs);
 
 		deleteTodoByDateInMs(true, dateOfCorrespondingTodoInMs);
 		incrementAndDisplayCompletedTodoCount(false);
@@ -498,7 +430,6 @@ textInput.addEventListener("input", (event) => {
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /* The code below is for dragging & dropping exclusively. This was very hard to implement. I've followed these amazing guides:
 https://htmldom.dev/drag-and-drop-element-in-a-list/
 https://htmldom.dev/make-a-draggable-element/
@@ -535,10 +466,7 @@ const mouseDownHandler = (event) => {
 		// keeping width normal while dragging
 		draggingElement.style.width = `${elementRectangle.width}px`;
 
-		// Show the move-todos-here
-		console.log(
-			event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection
-		);
+		// Show the move-todos-here div
 		if (
 			event.target.parentNode === viewSection ||
 			event.target.parentNode.parentNode === viewSection
@@ -586,7 +514,6 @@ const mouseUpHandler = (event) => {
 
 	/* If dragged to completed todo's, add to completed todo's on mouseup. */
 	const completedTodosRectangle = completedTodosSection.getBoundingClientRect();
-
 	if (
 		event.pageX > completedTodosRectangle.left &&
 		event.pageX < completedTodosRectangle.right &&
@@ -594,19 +521,11 @@ const mouseUpHandler = (event) => {
 		event.pageY > completedTodosRectangle.top &&
 		(event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection)
 	) {
-		console.log(event.pageX);
-		console.log(event.pageY);
-		console.log("SYKE");
-
-		console.log(
-			event.target.parentNode === viewSection || event.target.parentNode.parentNode === viewSection
-		);
-		console.log(event.target);
 		addTodoToCompletedHandler(event);
 	}
 
 	// If move-todos-here is showing, and there are completed todos, stop showing it on mouseup
-	console.log(moveTodosHere.style.display === "flex" && completedTodos.length > 0);
+
 	if (moveTodosHere.style.display === "flex" && completedTodos.length > 0) {
 		completedTodosHeaderContent.style.display = "block";
 		completedTodosSection.style.position = "static";

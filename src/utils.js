@@ -30,7 +30,7 @@ async function getPersistent(key) {
 
 	if (response.ok) {
 		let json = await response.json();
-		console.log("JSONbin Loaded Successfully");
+
 		return json;
 	} else {
 		alert("HTTP-Error: " + response.status);
@@ -69,9 +69,6 @@ async function setPersistent(key, todoList, completedTodos) {
 
 		loader.style.display = "none";
 		/* Loader styling end */
-
-		console.log(result);
-		console.log("Request Successful");
 	} catch (error) {
 		alert(error);
 	}
