@@ -206,13 +206,6 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 	console.log(todoCreatedAt.dataset.dateMs); // Attributes are converted to camelCase
 	todoContainer.appendChild(todoCreatedAt);
 	todoCreatedAt.innerText = toMySqlFormat(todo.date);
-	/* Create shorter version of date for use in media queries */
-	const todoCreatedAtShortVersion = document.createElement("div");
-	todoCreatedAtShortVersion.classList.add("todo-created-at");
-	todoCreatedAtShortVersion.setAttribute("id", "todo-created-at-short-version");
-	todoCreatedAtShortVersion.setAttribute("data-date-ms", todo.date);
-	todoContainer.appendChild(todoCreatedAtShortVersion);
-	todoCreatedAtShortVersion.innerText = toMyDateForSmallerScreens(todo.date);
 
 	const todoText = document.createElement("div");
 	todoText.classList.add("todo-text");
@@ -230,6 +223,14 @@ function displayTodo(isCompleted, todo = todoList[todoList.length - 1]) {
 		todoContainer.appendChild(completeTodoButton);
 		completeTodoButton.innerText = "✔";
 	}
+
+	/* Create shorter version of date for use in media queries. Ideally I would just put them before todoText but this way it fails test number 6 (which is poorly written, because It forces me to not have elements between todoPriority, todoCreatedAt and todoText.)*/
+	const todoCreatedAtShortVersion = document.createElement("div");
+	todoCreatedAtShortVersion.classList.add("todo-created-at");
+	todoCreatedAtShortVersion.setAttribute("id", "todo-created-at-short-version");
+	todoCreatedAtShortVersion.setAttribute("data-date-ms", todo.date);
+	todoContainer.appendChild(todoCreatedAtShortVersion);
+	todoCreatedAtShortVersion.innerText = toMyDateForSmallerScreens(todo.date);
 
 	// This is for adding mousedown handlers on todocontainers upon creation
 	todoContainer.addEventListener("mousedown", mouseDownHandler);

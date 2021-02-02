@@ -221,7 +221,7 @@ input[type="text"]:focus {
 }
 
 .todo-container * {
-	vertical-align: middle;
+	vertical-align: top;
 }
 
 .view-section > :hover {
@@ -275,15 +275,21 @@ input[type="text"]:focus {
 }
 
 #sort-button {
-	width: 8vmax;
-	height: 4vmax;
-	font-size: 2vmax;
+	width: 7vmax;
+	height: 3vmax;
+	font-size: 1.5vmax;
+}
+
+#add-button {
+	width: 9vmax;
+	height: 3vmax;
+	font-size: 1.5vmax;
 }
 
 #sort-button-for-completed {
-	width: 8vmax;
-	height: 4vmax;
-	font-size: 2vmax;
+	width: 7vmax;
+	height: 3vmax;
+	font-size: 1.5vmax;
 }
 
 #sorting-order-button-for-completed {
@@ -352,6 +358,8 @@ input[type="text"]:focus {
 
 	#todo-created-at-short-version {
 		display: inline-block;
+		float: right;
+		margin: 0 0.5rem;
 	}
 
 	#todo-created-at-long-version {
@@ -360,6 +368,12 @@ input[type="text"]:focus {
 
 	.todo-text {
 		max-width: 36vw;
+	}
+
+	#add-button {
+		width: auto;
+		height: auto;
+		font-size: 13.333px;
 	}
 }
 
