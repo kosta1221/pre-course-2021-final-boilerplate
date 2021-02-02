@@ -1,130 +1,73 @@
-# ![Scale-Up Velocity](./readme-files/logo-main.png) Pre Course Project - Todo List 📋
+# Productivity Boost - My Amazing Todo-List! 📋
 
-This project will include most of the topics we have learnt so far.
-This repository includes a basic skeleton template with automated tests, use it for your submissions.
+This project was written using only vanilla JS, html and CSS.
 
-In this project you will create a Todo List Web Application, in which the user can store prioritized _todo tasks_ and view/sort that list.
+Productivity Boost is a todo list that can organize your various daily tasks and mark them as completed when you're done!
 
-Here is a preview sample of the desired functionality (without styling):
+## Features include:
 
-![Add todo task](./readme-files/basic-todo.gif)
+- Saving your todo tasks with a description, priority and date when the task was created. ✔
+- Sorting your tasks according to priority or date, in ascending or descending order. ✔
+- Sorting your tasks as you please by dragging them to the desired location in the list. ✔
+- Adding your todo tasks to the 'completed todos' section where you can view the tasks which you've completed and be proud of yourself. ✔
+- Sorting completed todos the same way you'd sort regular todos. ✔
+- Dragging your todos to the 'completed todos' section, which will also add them there.
+- Deleting any of your todos or completed todos. ✔
+- Also your todolist will be persistent! It, along with all of your actions like adding, deleting or completing todos are saved online. ✔
+- Works on mobile devices and medium screens! ✔
 
-## Instructions
+## Functionality:
 
-- Fork this repository into your account. Make sure to select the **public** option ⑂
-- Clone your new repository to your computer 🖥
-- Install the project dependencies by running `npm install` from the vscode terminal `ctrl + j` (make sure you are in the correct directory) 📂
-<!-- - [Create new branch](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/managing-branches) -->
-- Make changes to the code to meet the project requirements 📝
-- [Commit Early, Push Often](https://www.worklytics.co/commit-early-push-often/) - your work will be evaluated by your push history 📖
-- Good Luck! 🤘
+This is how you add your first todo:
 
-## Running tests
+![Add todo task](/gifs/demo1.gif)
 
-We have created automated tests for your convenience, use it to check your progression.
+This is how you add your todo to completed todos (There are 2 ways):
 
-Note that the automated tests rely on your code having the exact class names, Ids and objects structures as specified below.
+![Complete todo](/gifs/demo2.gif)
 
-To run the tests locally simply run `npm run test` in the terminal
+This is how you delete your todos:
 
-Note that each commit to `main` branch will trigger a github [action](https://docs.github.com/en/actions). You can easily see the action tests result on each commit:
+![Delete todo](/gifs/demo3.gif)
 
-![Commits test](./readme-files/commit-tests.png)
+When you have a lot of todos, you can organize them however you see fit like so:
 
-## Guidelines
+![Drag and drop](/gifs/demo4.gif)
 
-- The Todo list should have two sections: _Control_ section and _View_ section
-- The _Control_ section is where the user adds his todo task and priority, and should have three elements:
-  - [\<input\>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) with id `text-input`.
-  - [\<select\>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) with id `priority-selector` (options will be: 1-5).
-  - [\<button\>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button) with id `add-button`.
-- The _View_ section is where we display the list of added todo tasks and data. The list should start empty and each added todo should be inserted to the end of the list.
-- After the user clicks on the 'add' button, the todo input field should be "reset"
-- Every todo item should have a "container" div with class `todo-container` that will contain 3 sub-elements:
+You can also sort them by either their date or priority in an ascending or descending order like so:
 
-  - An element with a class `todo-text` with the text of the todo task
-  - An element with a class `todo-created-at` that will hold the creation time of the task in a [SQL format](https://www.w3schools.com/sql/sql_dates.asp#:~:text=SQL%20Date%20Data%20Types&text=DATE%20%2D%20format%20YYYY%2DMM%2D,YEAR%20%2D%20format%20YYYY%20or%20YY)
-  - An element for showing the numeric priority value of the task, with a class `todo-priority`
+![Drag and drop](/gifs/demo5.gif)
 
-  Good way 👍🏿:
+Congrats!! you can now use your todo list as you wish! This is how it looks like on **smaller screens**:
 
-  ```
-    <div class="todo-container">
-      <div class="todo-priority">
-        1
-      </div>
-      <div class="todo-created-at">
-        2020-06-18 11:51:12
-      </div>
-      <div class="todo-text">
-        the todo text
-      </div>
-    </div>
-  ```
+![Drag and drop](/gifs/demo6.gif)
 
-  Bad way 👎🏿:
+## My thoughts:
 
-  ```
-    <div class="todo-container">
-      <div class="todo-priority">
-        1
-      </div>
-      <div class="todo-created-at">
-        2020-06-18 11:51:12
-      </div>
-      <div class="todo-text">
-        <span>the todo text</span>
-      </div>
-    </div>
-  ```
+This was a very fun project for me, definitely got to refine most of what I've learned so far! I did my best to commit & push as early and as many times as I could, you can clearly see my whole working process through my 40+ commits. I've also tried to describe every small thing I've added and issue I had, and to spread my work evenly throughout the given timeframe.
 
-- Add a counter element to reflect the **current** number of todos stored in the app. This element should have an id of `counter`.
+## Resources:
 
-- Add a button with id `sort-button`. Clicking this element should resort the todo list by their todos priority (DESC)
+The persistance of the todo-list is achieved with jsonbin.io
 
-  ![alt text](./readme-files/todo.gif)
+This resource was very handy for working with the API:
 
-- **Make your todo-list persistent!**
+https://javascript.info/fetch
 
-  Save your todo-list as JSON (see `todo-list-example.json`) and store it in a persistent way, you have to options:
+Implementing drag & drop was challenging. I've used these amazing guides for it:
 
-  1. Use the `localStorage` browser api to save / load the todo-list JSON **with the 'my-todo' key**. This option will make it persist between _page reloads_.
+https://htmldom.dev/drag-and-drop-element-in-a-list/
 
-  2. Use the [jsonbin.io](https://jsonbin.io/) service api (using async/await fetch GET & PUT requests) to save / load your todo-list JSON. This option will make it persist across _devices and browsers_.
+https://htmldom.dev/make-a-draggable-element/
 
-**Note** You can add extra properties to the todo objects in the JSON that you want to be persistent.
+https://javascript.info/mouse-drag-and-drop
 
-## Bonus
+For styling I have used this awesome gradient generator:
 
-- jsonbin.io - see explanation above
-- Freestyle - add any feature you desire. Some ideas:
-  - [drag n' drop functionality](https://htmldom.dev/drag-and-drop-element-in-a-list)
-  - Delete + Edit a todo
-  - Undo action
-  - Search and highlight results
-  - Loading spinner for network request
-  - Mark/Unmark todo as done
-  - Something awesome we didn't think of...
-- For added value, you can add jest/puppeteer test to test any bonus feature you implemented
+https://www.w3schools.com/colors/colors_gradient.asp
 
-**Add an explanation in `README.md` for each bonus feature you add and a link to any resoure you used**
+I've used icons from font-awesome for my footer:
 
-## Grading policy
+https://fontawesome.com/
 
-- Your project will be graded by the number of automatic tests you pass
-- Using jsonbin.io
-- Extra freestyle features - Please add an explanation about the bonus features you added to the readme.md
-- new jest/puppeteer test
-- Code quality and style: indentation, Meaningful and non-disambiguate variable names, Comments documentation
-- Visual creativity, use css to make this app look awesome 💅🏿
-- Division to reusable functions, no code duplication
-- Git usage: meaningful commit messages, small commits, folder and file structures
-
-## Submitting
-
-- Change this file (README.md) and style it to showcase your solution (gifs, explanations, link to the github page, links to resources you used, etc...)
-- Submit your solution repo to the [ChallengeMe](http://challengeme.suvelocity.org/) system
-- Submit your repo link and github page and video to Google Classroom
-- Record a 5-10 min selfie video, describe yourself in a few words (age, location, military background, technological background). Also, talk about the solution you submitted (try to explain how your app works in general and which bonuses you added). Think about this video as an interview.
-
-GOOD LUCK!
+And countless of other tabs of MDN, w3schools and stackoverflow which have all helped me understand better the intricacies of JS, HTML and CSS.
