@@ -357,7 +357,7 @@ input[type="text"]:focus {
 	}
 
 	#todo-created-at-short-version {
-		display: inline-block;
+		/* display: inline-block; */
 		float: right;
 		margin: 0 0.5rem;
 	}
