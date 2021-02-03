@@ -2,6 +2,8 @@
 
 This project was written using only vanilla JS, html and CSS.
 
+It is hosted on GitHub pages here - https://kosta1221.github.io/productivity-boost-todolist/src/index
+
 Productivity Boost is a todo list that can organize your various daily tasks and mark them as completed when you're done!
 
 ## Features include:
