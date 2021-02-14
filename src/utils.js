@@ -8,7 +8,7 @@ async function getPersistent(key) {
 		element.style.filter = "blur(3px)";
 		document.body.style.background = "#808080";
 	});
-
+	document.body.style.pointerEvents = "none";
 	loader.style.display = "block";
 	/* Loader styling end */
 
@@ -24,7 +24,7 @@ async function getPersistent(key) {
 		element.style.filter = "";
 		document.body.style.background = "";
 	});
-
+	document.body.style.pointerEvents = "auto";
 	loader.style.display = "none";
 	/* Loader styling end */
 
@@ -46,7 +46,7 @@ async function setPersistent(key, todoList, completedTodos) {
 			element.style.filter = "blur(3px)";
 			document.body.style.background = "#808080";
 		});
-
+		document.body.style.pointerEvents = "none";
 		loader.style.display = "block";
 		/* Loader styling end */
 
@@ -66,7 +66,7 @@ async function setPersistent(key, todoList, completedTodos) {
 			element.style.filter = "";
 			document.body.style.background = "";
 		});
-
+		document.body.style.pointerEvents = "auto";
 		loader.style.display = "none";
 		/* Loader styling end */
 	} catch (error) {
