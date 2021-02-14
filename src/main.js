@@ -326,6 +326,15 @@ function addTodoToCompletedHandler(event) {
 		incrementAndDisplayTodoCount(false);
 		incrementAndDisplayCompletedTodoCount(true);
 	}
+
+	// If move-todos-here is showing, stop showing it
+
+	if (moveTodosHere.style.display === "flex") {
+		completedTodosHeaderContent.style.display = "block";
+		completedTodosSection.style.position = "static";
+		moveTodosHere.style.display = "none";
+		completedTodosSection.style.minHeight = "";
+	}
 }
 
 /* Event listener for the "Add Task" button */
