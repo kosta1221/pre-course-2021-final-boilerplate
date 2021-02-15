@@ -40,40 +40,46 @@ let sortingOrderForCompleted = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
 async function loadDataFromApi() {
-	const loadedData = await getPersistent(API_KEY);
+	try {
+		const loadedData = await getPersistent(API_KEY);
+		console.log("Loaded data promise:");
+		console.log(loadedData);
 
-	if (Array.isArray(loadedData.record["my-todo"])) {
-		todoList = loadedData.record["my-todo"];
-	} else if (loadedData.record["my-todo"]) {
-		todoList.push(loadedData.record["my-todo"]);
-	}
-
-	if (Array.isArray(loadedData.record["completed-todos"])) {
-		completedTodos = loadedData.record["completed-todos"];
-	} else if (loadedData.record["completed-todos"]) {
-		completedTodos.push(loadedData.record["completed-todos"]);
-	}
-
-	//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
-	/* todoList = todoList.sort(sortingSpecifier(true, "priority")); */
-
-	if (todoList.length > 0) {
-		for (todo of todoList) {
-			displayTodo(false, todo);
-			incrementAndDisplayTodoCount(true);
+		if (Array.isArray(loadedData.record["my-todo"])) {
+			todoList = loadedData.record["my-todo"];
+		} else if (loadedData.record["my-todo"]) {
+			todoList.push(loadedData.record["my-todo"]);
 		}
-	}
 
-	if (completedTodos.length > 0) {
-		for (completedTodo of completedTodos) {
-			displayTodo(true, completedTodo);
-			incrementAndDisplayCompletedTodoCount(true);
+		if (Array.isArray(loadedData.record["completed-todos"])) {
+			completedTodos = loadedData.record["completed-todos"];
+		} else if (loadedData.record["completed-todos"]) {
+			completedTodos.push(loadedData.record["completed-todos"]);
 		}
-	} else {
-		completedTodosSection.style.position = "relative";
-		completedTodosHeaderContent.style.display = "none";
-		moveTodosHere.style.display = "flex";
-		completedTodosSection.style.minHeight = "200px";
+
+		//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
+		/* todoList = todoList.sort(sortingSpecifier(true, "priority")); */
+
+		if (todoList.length > 0) {
+			for (todo of todoList) {
+				displayTodo(false, todo);
+				incrementAndDisplayTodoCount(true);
+			}
+		}
+
+		if (completedTodos.length > 0) {
+			for (completedTodo of completedTodos) {
+				displayTodo(true, completedTodo);
+				incrementAndDisplayCompletedTodoCount(true);
+			}
+		} else {
+			completedTodosSection.style.position = "relative";
+			completedTodosHeaderContent.style.display = "none";
+			moveTodosHere.style.display = "flex";
+			completedTodosSection.style.minHeight = "200px";
+		}
+	} catch (error) {
+		console.log("There was an error. ", error);
 	}
 }
 
