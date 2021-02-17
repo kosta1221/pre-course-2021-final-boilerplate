@@ -24,6 +24,17 @@ app.get("/b", (req, res) => {
 	}
 });
 
+// GET request to /b/{id} returns the details of the object
+// Currently works on http://localhost:3000/b/todos
+app.get("/b/:id", (req, res) => {
+	const { id } = req.params;
+	fs.readFile(`./todos/${id}.json`, (err, data) => {
+		if (err) {
+			res.status(500).json({ message: "ERROR!", error: err });
+		} else res.send(data);
+	});
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
