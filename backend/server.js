@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-
+const uuid = require("uuid");
 const app = express();
 
 // turning request into JSON
@@ -19,7 +19,7 @@ app.get("/b", (req, res) => {
 			});
 			res.send(todos);
 		} catch (err) {
-			console.log("ERROR" + err);
+			res.status(500).json({ message: "Internal server error", error: err });
 		}
 	}
 });
@@ -30,9 +30,30 @@ app.get("/b/:id", (req, res) => {
 	const { id } = req.params;
 	fs.readFile(`./todos/${id}.json`, (err, data) => {
 		if (err) {
-			res.status(500).json({ message: "ERROR!", error: err });
+			res.status(500).json({ message: "Internal server error", error: err });
 		} else res.send(data);
 	});
+});
+
+// POST request to /b - create new object and return the new object
+app.post("/b", (req, res) => {
+	const { body } = req;
+	if (Object.keys(body).length === 0) {
+		res.status(400).json({
+			message: "Bin can't be blank!",
+		});
+	} else {
+		const id = uuid.v4();
+		body.id = id;
+		fs.writeFile(`./todos/${id}.json`, JSON.stringify(body, null, 4), (err) => {
+			if (err) {
+				res.status(500).json({ message: "Internal server error", error: err });
+			} else {
+				console.log(`New user id: ${id}`);
+				res.status(201).json(body);
+			}
+		});
+	}
 });
 
 const PORT = process.env.PORT || 3000;
