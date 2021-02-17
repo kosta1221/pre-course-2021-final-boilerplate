@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const uuid = require("uuid");
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // turning request into JSON
 app.use(express.json());
@@ -25,7 +26,6 @@ app.get("/b", (req, res) => {
 });
 
 // GET request to /b/{id} returns the details of the object
-// Currently works on http://localhost:3000/b/todos
 app.get("/b/:id", (req, res) => {
 	const { id } = req.params;
 	if (!fs.existsSync(`./todos/${id}.json`)) {
@@ -44,7 +44,7 @@ app.post("/b", (req, res) => {
 	const { body } = req;
 	if (Object.keys(body).length === 0) {
 		res.status(400).json({
-			message: "Bin can't be blank!",
+			message: "new bin can't be blank!",
 		});
 	} else {
 		const id = uuid.v4();
@@ -66,7 +66,7 @@ app.put("/b/:id", (req, res) => {
 	const { body } = req;
 	if (!fs.existsSync(`./todos/${id}.json`)) {
 		res.status(400).json({
-			message: "Bin id not found",
+			message: "Bin id to update not found",
 		});
 	} else {
 		body.id = id;
@@ -81,7 +81,24 @@ app.put("/b/:id", (req, res) => {
 	}
 });
 
-const PORT = process.env.PORT || 3000;
+// DELETE request to /b/{id} delete an object
+app.delete("/b/:id", (req, res) => {
+	const { id } = req.params;
+	if (!fs.existsSync(`./todos/${id}.json`)) {
+		res.status(400).json({
+			message: "Bin id to delete not found",
+		});
+	} else {
+		fs.unlink(`./todos/${id}.json`, (err) => {
+			if (err) {
+				res.status(500).json({ message: "Internal server error", error: err });
+			} else {
+				console.log(`Deleted bin id: ${id}`);
+				res.status(201).send(`Deleted bin id: ${id}`);
+			}
+		});
+	}
+});
 
 app.listen(PORT, () => {
 	console.log(`Server started on port ${PORT}`);
