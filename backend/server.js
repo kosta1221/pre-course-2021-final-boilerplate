@@ -7,8 +7,10 @@ const PORT = process.env.PORT || 3000;
 // turning request into JSON
 app.use(express.json());
 
+// middleware for waiting 1 second between server requests
 app.use(function (req, res, next) {
 	console.log("Time:", Date.now());
+	console.log("Request Type:", req.method);
 	setTimeout(next, 1000);
 });
 
@@ -47,22 +49,20 @@ app.get("/b/:id", (req, res) => {
 // POST request to /b - create new object and return the new object
 app.post("/b", (req, res) => {
 	const { body } = req;
+	const id = uuid.v4();
 	if (Object.keys(body).length === 0) {
-		res.status(400).json({
-			message: "new bin can't be blank!",
-		});
-	} else {
-		const id = uuid.v4();
-		body.id = id;
-		fs.writeFile(`./todos/${id}.json`, JSON.stringify(body, null, 4), (err) => {
-			if (err) {
-				res.status(500).json({ message: "Internal server error", error: err });
-			} else {
-				console.log(`New bin id: ${id}`);
-				res.status(201).json(body);
-			}
-		});
+		body["my-todo"] = [];
+		body["completed-todos"] = [];
 	}
+	body.id = id;
+	fs.writeFile(`./todos/${id}.json`, JSON.stringify(body, null, 4), (err) => {
+		if (err) {
+			res.status(500).json({ message: "Internal server error", error: err });
+		} else {
+			console.log(`New bin id: ${id}`);
+			res.status(201).json(body);
+		}
+	});
 });
 
 // PUT request to /b/{id} get in the body params updated object and return the updated object

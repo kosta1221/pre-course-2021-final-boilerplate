@@ -447,6 +447,8 @@ input[type="text"]:focus {
 
 #admin-page-wrapper {
 	min-height: 60vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .bin-container {
@@ -476,4 +478,12 @@ input[type="text"]:focus {
 
 .buttons-of-bin-container-div > * {
 	margin: auto 0.7vw;
+}
+
+#create-new-bin-button {
+	border-radius: 15px;
+	margin: auto;
+	min-width: 25vw;
+	height: 6vmax;
+	font-size: 3.3vmax;
 }

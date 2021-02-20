@@ -1,5 +1,6 @@
 const allElementsInBodyExceptLoader = document.querySelectorAll("body :not(#loader)");
 const adminPageWrapper = document.querySelector("#admin-page-wrapper");
+const createNewBinButton = document.querySelector("#create-new-bin-button");
 
 let bins = [];
 
@@ -15,17 +16,21 @@ async function loadAdmin() {
 
 loadAdmin();
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// A function for displaying a bin in the html document for the admin page
 function displayBin(bin) {
 	const binContainer = document.createElement("div");
 	binContainer.classList.add("todo-container");
 	binContainer.classList.add("bin-container");
-	adminPageWrapper.appendChild(binContainer);
+	console.log(adminPageWrapper.lastChild);
+	adminPageWrapper.insertBefore(binContainer, createNewBinButton);
+	console.log(createNewBinButton);
 
 	const todoListNumber = document.createElement("div");
 	todoListNumber.classList.add("todos-number");
 	binContainer.appendChild(todoListNumber);
 	todoListNumber.innerText = "Number of todos " + bin["my-todo"].length;
-	console.log(bin["my-todo"].toString());
 
 	const completedTodosNumber = document.createElement("div");
 	completedTodosNumber.classList.add("completed-todos-number");
@@ -65,4 +70,9 @@ adminPageWrapper.addEventListener("click", (event) => {
 		sessionStorage.setItem("currentWantedBinId", idOfCorrespondingBin);
 		window.location.href = "./index.html";
 	}
+});
+
+/* Event listener for create-new-bin-button */
+createNewBinButton.addEventListener("click", () => {
+	createNewBin();
 });
