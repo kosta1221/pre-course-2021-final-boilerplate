@@ -7,6 +7,11 @@ const PORT = process.env.PORT || 3000;
 // turning request into JSON
 app.use(express.json());
 
+app.use(function (req, res, next) {
+	console.log("Time:", Date.now());
+	setTimeout(next, 1000);
+});
+
 // GET request to /b returns a list of objects
 app.get("/b", (req, res) => {
 	const files = fs.readdirSync("./todos");
