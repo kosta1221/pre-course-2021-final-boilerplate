@@ -442,3 +442,38 @@ input[type="text"]:focus {
 		margin-right: 0;
 	}
 }
+
+/* Stuff for admin page */
+
+#admin-page-wrapper {
+	min-height: 60vh;
+}
+
+.bin-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.admin-button {
+	display: block;
+	margin-right: 0;
+}
+
+.move-to-bin-button:hover {
+	transition: 0.5s;
+	border: 2px inset indigo;
+	background-color: #3e8e41;
+	box-shadow: 0 5px #666;
+	color: white;
+}
+
+.move-to-bin-button:active {
+	background-color: #3e8e41;
+	box-shadow: 0 5px #666;
+	transform: translateY(4px);
+}
+
+.buttons-of-bin-container-div > * {
+	margin: auto 0.7vw;
+}

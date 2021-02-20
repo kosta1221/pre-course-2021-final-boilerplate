@@ -30,6 +30,7 @@ const completedTodosHeaderContent = document.querySelector("#completed-todos-hea
 const RED_ARROW_DOWN_SRC = "/images/240px-Red_Arrow_Down.svg.png";
 const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
 
+const currentWantedBinId = sessionStorage.getItem("currentWantedBinId");
 const deletedTodos = [];
 let todoList = [];
 let completedTodos = [];
@@ -39,22 +40,35 @@ let sortingOrder = true; // true for descending, false for ascending
 let sortingOrderForCompleted = true; // true for descending, false for ascending
 
 /* A function for loading data from Jsonbin.io */
-async function loadDataFromApi() {
+async function loadDataFromApi(binId = null) {
+	/* if (!window.location.href.includes("/index.html")) {
+		window.location.href = "./index.html";
+	} */
+	console.log(currentWantedBinId);
+	console.log(binId);
+	if (binId === null) {
+		if (confirm("For admin site press 'OK'")) {
+			window.location.href = "./admin.html";
+		} else {
+			binId = prompt("Please input your bin id:", "e20a3315-0e2f-442c-8df9-2f661c932dfd");
+		}
+	}
+
 	try {
-		const loadedData = await getPersistent(API_KEY);
+		const loadedData = await getPersistent(binId);
 		console.log("Loaded data promise:");
 		console.log(loadedData);
 
-		if (Array.isArray(loadedData.record["my-todo"])) {
-			todoList = loadedData.record["my-todo"];
-		} else if (loadedData.record["my-todo"]) {
-			todoList.push(loadedData.record["my-todo"]);
+		if (Array.isArray(loadedData["my-todo"])) {
+			todoList = loadedData["my-todo"];
+		} else if (loadedData["my-todo"]) {
+			todoList.push(loadedData["my-todo"]);
 		}
 
-		if (Array.isArray(loadedData.record["completed-todos"])) {
-			completedTodos = loadedData.record["completed-todos"];
-		} else if (loadedData.record["completed-todos"]) {
-			completedTodos.push(loadedData.record["completed-todos"]);
+		if (Array.isArray(loadedData["completed-todos"])) {
+			completedTodos = loadedData["completed-todos"];
+		} else if (loadedData["completed-todos"]) {
+			completedTodos.push(loadedData["completed-todos"]);
 		}
 
 		//WARNING! UNCOMMENTING THIS WILL CAUSE A TEST TO FAIL. Used to change  default sort of todoList upon page load.
@@ -83,7 +97,13 @@ async function loadDataFromApi() {
 	}
 }
 
-loadDataFromApi();
+if (!window.location.href.includes("/admin.html")) {
+	if (currentWantedBinId) {
+		loadDataFromApi(currentWantedBinId);
+	} else {
+		loadDataFromApi();
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

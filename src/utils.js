@@ -1,9 +1,9 @@
-const API_KEY = "$2b$10$LhqzBGYWSVI2u1NzlPTNQOwDUTlcwHwMkW7ajbIvAWNLuvldvmvlK"; // Assign this variable to your JSONBIN.io API key if you choose to use it.
+const API_KEY = "$2b$10$LhqzBGYWSVI2u1NzlPTNQOwDUTlcwHwMkW7ajbIvAWNLuvldvmvlK";
 const DB_NAME = "my-todo";
-const URL = "https://api.jsonbin.io/v3/b/60130f82ef99c57c734b2f2f";
+const URL = "http://localhost:3000/b";
 
-// Gets data from persistent storage by the given key and returns it
-function getPersistent(key) {
+// Gets data of all bins from backend
+function getAllBinsPersistent() {
 	/* Show loader, make screen unclickable */
 	allElementsInBodyExceptLoader.forEach((element) => {
 		element.style.filter = "blur(3px)";
@@ -13,9 +13,43 @@ function getPersistent(key) {
 	loader.style.display = "block";
 	/* End of code for showing loader */
 
-	let fetchPromise = fetch(URL + "/latest", {
+	let fetchPromise = fetch(URL, {
 		headers: {
-			"X-MASTER-KEY": key,
+			"Content-Type": "application/json;charset=utf-8",
+		},
+	});
+
+	return fetchPromise.then((response) => {
+		if (!response.ok) {
+			throw new Error("HTTP-Error: " + response.status);
+		}
+
+		/* Hide loader, make screen unclickable */
+		allElementsInBodyExceptLoader.forEach((element) => {
+			element.style.filter = "";
+			document.body.style.background = "";
+		});
+		document.body.style.pointerEvents = "auto";
+		loader.style.display = "none";
+		/* End of code for hiding loader*/
+
+		return response.json();
+	});
+}
+
+// Gets data from backend by bin id and returns it
+function getPersistent(binId) {
+	/* Show loader, make screen unclickable */
+	allElementsInBodyExceptLoader.forEach((element) => {
+		element.style.filter = "blur(3px)";
+		document.body.style.background = "#808080";
+	});
+	document.body.style.pointerEvents = "none";
+	loader.style.display = "block";
+	/* End of code for showing loader */
+
+	let fetchPromise = fetch(URL + "/" + binId, {
+		headers: {
 			"Content-Type": "application/json;charset=utf-8",
 		},
 	});
