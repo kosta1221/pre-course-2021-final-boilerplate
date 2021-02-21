@@ -72,6 +72,17 @@ adminPageWrapper.addEventListener("click", (event) => {
 	}
 });
 
+/* Event listener for delete-button */
+adminPageWrapper.addEventListener("click", (event) => {
+	const closestDeleteButton = event.target.closest(".delete-button");
+	if (closestDeleteButton) {
+		const correspondingBin = closestDeleteButton.parentNode.parentNode;
+		const idOfCorrespondingBin = correspondingBin.querySelector(".bin-id").dataset.binId;
+		console.log(idOfCorrespondingBin);
+		deleteBin(idOfCorrespondingBin);
+	}
+});
+
 /* Event listener for create-new-bin-button */
 createNewBinButton.addEventListener("click", () => {
 	createNewBin();
