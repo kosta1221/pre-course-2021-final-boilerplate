@@ -104,9 +104,8 @@ function getPersistent(binId) {
 	});
 }
 
-// Saves the given data into persistent storage by the given key.
-// Returns 'true' on success.
-function setPersistent(key, todoList, completedTodos) {
+// send a PUT request to the backend, using the id of the bin to update, and the updated data.
+function setPersistent(binId, todoList, completedTodos) {
 	/* Show loader, make screen unclickable */
 	allElementsInBodyExceptLoader.forEach((element) => {
 		element.style.filter = "blur(3px)";
@@ -116,10 +115,9 @@ function setPersistent(key, todoList, completedTodos) {
 	loader.style.display = "block";
 	/* End of code for showing loader */
 
-	let fetchPromise = fetch(URL, {
+	let fetchPromise = fetch(URL + "/" + binId, {
 		method: "PUT",
 		headers: {
-			"X-MASTER-KEY": key,
 			"Content-Type": "application/json;charset=utf-8",
 		},
 		body: JSON.stringify({ "my-todo": todoList, "completed-todos": completedTodos }),

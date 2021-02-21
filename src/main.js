@@ -13,6 +13,7 @@ const sortingOrderButton = document.querySelector("#sorting-order-button");
 const sortingImage = document.querySelector("#sorting-image");
 const allElementsInBodyExceptLoader = document.querySelectorAll("body :not(#loader)");
 const moveTodosHere = document.querySelector("#move-todos-here");
+const binIdText = document.querySelector("#bin-id-text");
 
 /* DOM Elements for completed todo's */
 const completedTodosSection = document.querySelector(".completed-todos-section");
@@ -53,6 +54,7 @@ async function loadDataFromApi(binId = null) {
 			binId = prompt("Please input your bin id:", "e20a3315-0e2f-442c-8df9-2f661c932dfd");
 		}
 	}
+	binIdText.innerText = `Bin id: ${currentWantedBinId}`;
 
 	try {
 		const loadedData = await getPersistent(binId);
@@ -154,14 +156,14 @@ async function pushTodo(text, priority, date) {
 	const dataToPush = { text, priority, date };
 
 	todoList.push(dataToPush);
-	await setPersistent(API_KEY, todoList, completedTodos);
+	await setPersistent(currentWantedBinId, todoList, completedTodos);
 }
 
 /* A function for pushing todo tasks to completedTodos */
 async function pushTodoToCompleted(text, priority, date) {
 	completedTodos.push({ text, priority, date, dateCompleted: new Date().getTime() });
 
-	await setPersistent(API_KEY, todoList, completedTodos);
+	await setPersistent(currentWantedBinId, todoList, completedTodos);
 }
 
 /* A function for finding an index of an object in an array based on a value of its property */
@@ -181,7 +183,7 @@ async function deleteTodoByDateInMs(isCompleted, dateInMS) {
 
 		if (indexOfTodoToDelete > -1) {
 			completedTodos.splice(indexOfTodoToDelete, 1);
-			await setPersistent(API_KEY, todoList, completedTodos);
+			await setPersistent(currentWantedBinId, todoList, completedTodos);
 		}
 		// If it's the last completed todo and it's deleted, show 'move-todos-here'
 		if (completedTodos.length < 1) {
@@ -196,7 +198,7 @@ async function deleteTodoByDateInMs(isCompleted, dateInMS) {
 
 		if (indexOfTodoToDelete > -1) {
 			deletedTodos.push(todoList.splice(indexOfTodoToDelete, 1));
-			await setPersistent(API_KEY, todoList, completedTodos);
+			await setPersistent(currentWantedBinId, todoList, completedTodos);
 		}
 	}
 }
