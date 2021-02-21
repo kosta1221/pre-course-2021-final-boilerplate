@@ -30,7 +30,7 @@ function displayBin(bin) {
 	const todoListNumber = document.createElement("div");
 	todoListNumber.classList.add("todos-number");
 	binContainer.appendChild(todoListNumber);
-	todoListNumber.innerText = "Number of todos " + bin["my-todo"].length;
+	todoListNumber.innerText = "Number of todos: " + bin["my-todo"].length;
 
 	const completedTodosNumber = document.createElement("div");
 	completedTodosNumber.classList.add("completed-todos-number");

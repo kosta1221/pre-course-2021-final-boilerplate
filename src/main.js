@@ -160,10 +160,12 @@ async function pushTodo(text, priority, date) {
 }
 
 /* A function for pushing todo tasks to completedTodos */
-async function pushTodoToCompleted(text, priority, date) {
+async function pushTodoToCompleted(text, priority, date, updateServer) {
 	completedTodos.push({ text, priority, date, dateCompleted: new Date().getTime() });
 
-	await setPersistent(currentWantedBinId, todoList, completedTodos);
+	if (updateServer) {
+		await setPersistent(currentWantedBinId, todoList, completedTodos);
+	}
 }
 
 /* A function for finding an index of an object in an array based on a value of its property */
@@ -342,15 +344,19 @@ function addTodoToCompletedHandler(event) {
 		const textOfCorrespondingTodo = correspondingTodo.querySelector(".todo-text").innerText;
 		const priorityOfCorrespondingTodo = correspondingTodo.querySelector(".todo-priority").innerText;
 
-		pushTodoToCompleted(
-			textOfCorrespondingTodo,
-			priorityOfCorrespondingTodo,
-			dateOfCorrespondingTodoInMs
-		);
 		completedTodosSection.appendChild(correspondingTodo);
 		correspondingTodo.querySelector(".complete-todo-button").remove();
 
+		pushTodoToCompleted(
+			textOfCorrespondingTodo,
+			priorityOfCorrespondingTodo,
+			dateOfCorrespondingTodoInMs,
+			false
+		);
+
+		// Async call
 		deleteTodoByDateInMs(false, dateOfCorrespondingTodoInMs);
+
 		incrementAndDisplayTodoCount(false);
 		incrementAndDisplayCompletedTodoCount(true);
 	}
