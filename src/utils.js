@@ -3,7 +3,7 @@ const DB_NAME = "my-todo";
 const URL = "http://localhost:3000/b";
 
 /* Show loader, make screen unclickable */
-function showloader() {
+function showLoader() {
 	allElementsInBodyExceptLoader.forEach((element) => {
 		element.style.filter = "blur(3px)";
 		document.body.style.background = "#808080";
@@ -13,7 +13,7 @@ function showloader() {
 }
 
 /* Hide loader, make screen unclickable */
-function hideloader() {
+function hideLoader() {
 	allElementsInBodyExceptLoader.forEach((element) => {
 		element.style.filter = "";
 		document.body.style.background = "";
@@ -24,7 +24,7 @@ function hideloader() {
 
 // Delete a bin from the backend using the bin's id
 function deleteBin(binId) {
-	showloader();
+	showLoader();
 	let fetchPromise = fetch(URL + "/" + binId, {
 		method: "DELETE",
 		headers: {
@@ -33,14 +33,14 @@ function deleteBin(binId) {
 	});
 
 	fetchPromise.then((response) => {
-		hideloader();
+		hideLoader();
 		console.log("Response status: " + response.status);
 	});
 }
 
 // Create a new bin using backend
 function createNewBin(data) {
-	showloader();
+	showLoader();
 	let fetchPromise = fetch(URL, {
 		method: "POST",
 		headers: {
@@ -50,14 +50,14 @@ function createNewBin(data) {
 	});
 
 	fetchPromise.then((response) => {
-		hideloader();
+		hideLoader();
 		console.log("Response status: " + response.status);
 	});
 }
 
 // Gets data of all bins from backend
 function getAllBinsPersistent() {
-	showloader();
+	showLoader();
 	let fetchPromise = fetch(URL, {
 		headers: {
 			"Content-Type": "application/json;charset=utf-8",
@@ -69,14 +69,14 @@ function getAllBinsPersistent() {
 			throw new Error("HTTP-Error: " + response.status);
 		}
 
-		hideloader();
+		hideLoader();
 		return response.json();
 	});
 }
 
 // Gets data from backend by bin id and returns it
 function getPersistent(binId) {
-	showloader();
+	showLoader();
 	let fetchPromise = fetch(URL + "/" + binId, {
 		headers: {
 			"Content-Type": "application/json;charset=utf-8",
@@ -88,14 +88,14 @@ function getPersistent(binId) {
 			throw new Error("HTTP-Error: " + response.status);
 		}
 
-		hideloader();
+		hideLoader();
 		return response.json();
 	});
 }
 
 // send a PUT request to the backend, using the id of the bin to update, and the updated data.
 function setPersistent(binId, todoList, completedTodos) {
-	showloader();
+	showLoader();
 	let fetchPromise = fetch(URL + "/" + binId, {
 		method: "PUT",
 		headers: {
@@ -109,7 +109,7 @@ function setPersistent(binId, todoList, completedTodos) {
 			throw new Error("HTTP-Error: " + response.status);
 		}
 
-		hideloader();
+		hideLoader();
 		console.log("Response status: " + response.status);
 	});
 }

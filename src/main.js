@@ -30,9 +30,9 @@ const completedTodosHeaderContent = document.querySelector("#completed-todos-hea
 
 const RED_ARROW_DOWN_SRC = "/images/240px-Red_Arrow_Down.svg.png";
 const GREEN_ARROW_UP_SRC = "/images/Green_Arrow_Up.png";
-
-const currentWantedBinId = sessionStorage.getItem("currentWantedBinId");
 const deletedTodos = [];
+
+let currentWantedBinId = sessionStorage.getItem("currentWantedBinId");
 let todoList = [];
 let completedTodos = [];
 let todoCount = 0;
@@ -51,13 +51,18 @@ async function loadDataFromApi(binId = null) {
 		if (confirm("For admin site press 'OK'")) {
 			window.location.href = "./admin.html";
 		} else {
-			binId = prompt("Please input your bin id:", "e20a3315-0e2f-442c-8df9-2f661c932dfd");
+			binId = currentWantedBinId = prompt(
+				"Please input your bin id:",
+				"e20a3315-0e2f-442c-8df9-2f661c932dfd"
+			);
 		}
 	}
-	binIdText.innerText = `Bin id: ${currentWantedBinId}`;
 
 	try {
 		const loadedData = await getPersistent(binId);
+
+		binIdText.innerText = `Bin id: ${currentWantedBinId}`;
+
 		console.log("Loaded data promise:");
 		console.log(loadedData);
 
