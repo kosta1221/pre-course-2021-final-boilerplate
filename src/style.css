@@ -420,6 +420,10 @@ input[type="text"]:focus {
 		flex-direction: row;
 		align-items: center;
 	}
+
+	#login-page-header-title {
+		font-size: xx-large;
+	}
 }
 
 /* Super Small screens */
@@ -486,4 +490,37 @@ input[type="text"]:focus {
 	min-width: 25vw;
 	height: 6vmax;
 	font-size: 3.3vmax;
+}
+
+/* stuff for login page */
+#login-page-wrapper {
+	min-height: 75vh;
+	display: flex;
+	flex-direction: column;
+}
+
+#login-page-header-title {
+	font-size: 5.5vw;
+}
+
+#login-form {
+	display: flex;
+	flex-direction: column;
+	margin-top: 10vh;
+}
+
+#login-form > *:not(label) {
+	width: 45vw;
+	height: 6vh;
+	margin: 0.4vh auto;
+}
+
+#login-buttons-div {
+	display: flex;
+	justify-content: space-between;
+}
+
+#login-buttons-div > * {
+	width: 22vw;
+	height: 6vh;
 }

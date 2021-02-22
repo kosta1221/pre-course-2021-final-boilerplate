@@ -66,6 +66,13 @@
 	margin-left: 3px;
 }
 
+#login-footer {
+	margin-top: 20px;
+	padding: 25px 50px;
+	position: fixed;
+	bottom: 0;
+}
+
 /* Footer responsiveness */
 
 @media (max-width: 600px) {
@@ -81,5 +88,9 @@
 
 	.footer .footer-left p.footer-links {
 		line-height: 1.8;
+	}
+
+	#login-footer {
+		position: relative;
 	}
 }
