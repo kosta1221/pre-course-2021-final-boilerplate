@@ -22,13 +22,19 @@ function hideLoader() {
 	loader.style.display = "none";
 }
 
+// A function for logging users to their todolists
+function loginUser(username, password) {}
+
+// A function for signing up users
+function signupUser(username, password) {}
+
 // Delete a bin from the backend using the bin's id
 function deleteBin(binId) {
 	showLoader();
 	let fetchPromise = fetch(URL + "/" + binId, {
 		method: "DELETE",
 		headers: {
-			"Content-Type": "application/json;charset=utf-8",
+			"Content-Type": "application/json",
 		},
 	});
 
